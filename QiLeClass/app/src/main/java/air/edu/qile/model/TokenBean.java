@@ -1,4 +1,4 @@
-package air.edu.qile.oss;
+package air.edu.qile.model;
 
 /**
  * Created by Administrator on 2018/4/14 0014.

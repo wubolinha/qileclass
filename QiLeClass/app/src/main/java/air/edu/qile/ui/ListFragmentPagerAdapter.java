@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class ListFragmentPagerAdapter   extends FragmentPagerAdapter {
 
-    private final int PAGER_COUNT = 4;
+    private final int PAGER_COUNT =4;
     private Fragment_1 myFragment1 = null;
     private Fragment_2 myFragment2 = null;
     private Fragment_3 myFragment3 = null;

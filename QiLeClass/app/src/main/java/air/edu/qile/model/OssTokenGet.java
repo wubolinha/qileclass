@@ -1,4 +1,4 @@
-package air.edu.qile.oss;
+package air.edu.qile.model;
 
 import com.alibaba.fastjson.JSON;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -24,7 +24,7 @@ import retrofit2.http.GET;
  *
  */
 
-public class OssNet {
+public class OssTokenGet {
 
     public static String  base_url="http://classqile.duapp.com";
     private interface  ossToken_apiInterface{
@@ -35,10 +35,10 @@ public class OssNet {
 
    /****************************************************************/
 
-    private static OssNet instance;
-    public static OssNet getInstance(){
+    private static OssTokenGet instance;
+    public static OssTokenGet getInstance(){
         if(  instance == null ){
-            instance=new OssNet();
+            instance=new OssTokenGet();
         }
         return  instance;
     }
@@ -47,7 +47,7 @@ public class OssNet {
     private ossToken_apiInterface  apiInterface;
     private Retrofit ossToken_retrofit;
 
-    public OssNet() {
+    public OssTokenGet() {
         ossToken_retrofit = new Retrofit.Builder()
                 .baseUrl(base_url)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -96,10 +96,10 @@ public class OssNet {
     private void  TranToObj(String  json){
 
         TokenBean token = JSON.parseObject(  json , TokenBean.class);
-        Logger.w( "token:\n"+ token.getCredentials().getAccessKeyId()+"\n"+
-                token.getCredentials().getAccessKeySecret()+"\n"+
-                token.getCredentials().getSecurityToken()
-                +"..................");
+//         Logger.w( "token:\n"+ token.getCredentials().getAccessKeyId()+"\n"+
+//                token.getCredentials().getAccessKeySecret()+"\n"+
+//                token.getCredentials().getSecurityToken()
+//                +"..................");
         Hawk.put(  TokenBean.class.getSimpleName() ,  token );
         EventBus.getDefault().post( token );
     }
