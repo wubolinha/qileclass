@@ -10,12 +10,12 @@ import java.util.List;
  * Created by Administrator on 2018/4/17.
  */
 
-public class FgRcycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class FragmentRcycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected Context mContext;
     protected List mDatas;
 
-    public FgRcycleAdapter(Context mContext, List mDatas) {
+    public FragmentRcycleAdapter(Context mContext, List mDatas) {
         this.mContext = mContext;
         this.mDatas = mDatas;
     }

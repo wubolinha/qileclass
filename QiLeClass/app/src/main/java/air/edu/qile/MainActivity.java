@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //  bug: 这里为什么要同时使用 2 个 setContentView ？
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
        // setContentView(R.layout.activity_main);
 
