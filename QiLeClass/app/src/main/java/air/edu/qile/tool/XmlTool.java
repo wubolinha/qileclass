@@ -2,10 +2,12 @@ package air.edu.qile.tool;
 
 import com.thoughtworks.xstream.XStream;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,10 +46,11 @@ public class XmlTool {
 
 
     // 读取
-    public List<DataConfig>  ReadFromXML(String xmlpath){
+    public List<DataConfig>  ReadFromXML(String xmlnetpath){
         List<DataConfig> configlist=new ArrayList<DataConfig>();
         try {
-            InputStreamReader in = new InputStreamReader (new FileInputStream(xmlpath));
+            URL url = new URL(xmlnetpath);
+            InputStreamReader in = new InputStreamReader (new BufferedInputStream(url.openStream()));
             configlist= (List<DataConfig>) xStream.fromXML( in );
             in.close();
         } catch (Exception e) {
