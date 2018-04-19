@@ -1,6 +1,7 @@
 package air.edu.qile;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.orhanobut.hawk.Hawk;
 
@@ -14,5 +15,10 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         Hawk.init(this).build();
+        AppContext=this;
     }
+
+    public  static Context AppContext;
+
+
 }

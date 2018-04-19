@@ -13,7 +13,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import air.edu.qile.databinding.ActivityMainBinding;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.OssTokenGet;
-import air.edu.qile.model.TokenBean;
+import air.edu.qile.model.bean.TokenBean;
 import air.edu.qile.ui.ListFragmentPagerAdapter;
 
 
@@ -50,14 +50,14 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
 
     public void threadStart ( ){
 
-        OssTokenGet.getInstance().getAccessToken();
+
 
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void EventBusEvent(TokenBean bean) {
 
-        OssBrowser osshelp=new OssBrowser( this ,  bean );
+
     }
 
 

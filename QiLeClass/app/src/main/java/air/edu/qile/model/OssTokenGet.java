@@ -9,6 +9,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
+import air.edu.qile.model.bean.TokenBean;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,19 +36,13 @@ public class OssTokenGet {
 
    /****************************************************************/
 
-    private static OssTokenGet instance;
-    public static OssTokenGet getInstance(){
-        if(  instance == null ){
-            instance=new OssTokenGet();
-        }
-        return  instance;
-    }
 
-
+    private OssTokenListen getlisten;
     private ossToken_apiInterface  apiInterface;
     private Retrofit ossToken_retrofit;
 
-    public OssTokenGet() {
+    public OssTokenGet(OssTokenListen getlisten) {
+        this.getlisten = getlisten;
         ossToken_retrofit = new Retrofit.Builder()
                 .baseUrl(base_url)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -55,6 +50,7 @@ public class OssTokenGet {
                 .build();
         apiInterface = ossToken_retrofit.create(ossToken_apiInterface.class);
     }
+
 
 
 
@@ -101,9 +97,18 @@ public class OssTokenGet {
 //                token.getCredentials().getSecurityToken()
 //                +"..................");
         Hawk.put(  TokenBean.class.getSimpleName() ,  token );
+
+        getlisten.GetToken(token);
         EventBus.getDefault().post( token );
     }
 
+
+    public interface    OssTokenListen {
+
+
+        public  void GetToken(TokenBean token);
+
+    }
 
 
 }

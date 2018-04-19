@@ -1,4 +1,4 @@
-package air.edu.qile.model;
+package air.edu.qile.model.bean;
 
 /**
  * Created by Administrator on 2018/4/18.

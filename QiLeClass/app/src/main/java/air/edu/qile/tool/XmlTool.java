@@ -3,7 +3,6 @@ package air.edu.qile.tool;
 import com.thoughtworks.xstream.XStream;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -11,7 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import air.edu.qile.model.DataConfig;
+import air.edu.qile.model.bean.DataConfig;
 
 /**
  * Created by Administrator on 2018/4/19 0019.

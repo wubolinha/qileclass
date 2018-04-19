@@ -1,6 +1,7 @@
 package air.edu.qile.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
 import com.alibaba.sdk.android.oss.ClientException;
@@ -16,6 +17,8 @@ import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
 import com.alibaba.sdk.android.oss.model.ListObjectsRequest;
 import com.alibaba.sdk.android.oss.model.ListObjectsResult;
 import com.orhanobut.logger.Logger;
+
+import air.edu.qile.model.bean.TokenBean;
 
 /**
  * Created by Administrator on 2018/4/11.
@@ -51,14 +54,19 @@ public class OssBrowser {
         } catch (ClientException e) {
             e.printStackTrace();
         }
-      //  Logger.w("测试:" + url);
-        ShowFolderFile();
+
     }
 
     // 显示文件夹下的文件
-    private void  ShowFolderFile(){
+    public void  ShowFolderFile(  String  path){
 
+        Log.w("test","ShowFolderFile:"+path);
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
+        // 设置文件层级
+        listObjects.setDelimiter(path);
+        // 设定前缀
+    //    listObjects.setPrefix("file");
+
         OSSAsyncTask task = oss.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
             @Override
             public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
