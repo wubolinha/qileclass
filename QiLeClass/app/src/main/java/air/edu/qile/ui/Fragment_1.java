@@ -19,7 +19,6 @@ import air.edu.qile.model.DataAccess;
 
 public class Fragment_1 extends Fragment {
 
-    private Handler  showhandler;
 
      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,16 +30,7 @@ public class Fragment_1 extends Fragment {
 
     private void initdata(){
 
-        showhandler=new Handler();
-
-
-        final DataAccess   dataAccess=new DataAccess();
-        showhandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dataAccess.getData("/奇乐课堂/微课堂");
-            }
-        },2000);
+        DataAccess.getInstance().getData( "奇乐课堂/微课堂/" );
 
 
     }

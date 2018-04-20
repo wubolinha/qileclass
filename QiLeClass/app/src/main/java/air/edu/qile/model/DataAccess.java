@@ -20,21 +20,33 @@ public class DataAccess implements  OssTokenGet.OssTokenListen{
 
     private  OssTokenGet  tokenGet;
     private OssBrowser ossBrowser;
+    private  boolean ossEnable=false;
 
-
+    private static DataAccess instance;
+    public static DataAccess getInstance() {
+        if( instance ==null ){
+            instance=new DataAccess();
+        }
+        return instance;
+    }
     public DataAccess() {
          tokenGet =new OssTokenGet(this);
          tokenGet.getAccessToken();
     }
 
     // 对应的路径
-    public String getData( String  path   ){
+    public String getData(final String  path   ){
         Log.w("test","getData:"+path);
-        if( ossBrowser == null ){
-            return null;
-        }
 
-        ossBrowser.ShowFolderFile(path);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while ( ! ossEnable ){
+
+                }
+                ossBrowser.ShowFolderFile(path);
+            }
+        }).start();
 
         return null;
     }
@@ -42,9 +54,10 @@ public class DataAccess implements  OssTokenGet.OssTokenListen{
 
     @Override
     public void GetToken(TokenBean token) {
+
         ossBrowser=new OssBrowser(MyApp.AppContext , token );
 
-
+        ossEnable=true;
 
     }
 

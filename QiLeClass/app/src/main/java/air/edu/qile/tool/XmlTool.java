@@ -36,7 +36,7 @@ public class XmlTool {
         xStream.alias("DataConfig", List.class);
     }
 
-    public XmlTool getInstance(){
+    public static XmlTool getInstance(){
         if( instance==null ){
             instance=new XmlTool();
         }
@@ -49,7 +49,7 @@ public class XmlTool {
         List<DataConfig> configlist=new ArrayList<DataConfig>();
         try {
             URL url = new URL(xmlnetpath);
-            InputStreamReader in = new InputStreamReader (new BufferedInputStream(url.openStream()));
+            InputStreamReader in = new InputStreamReader (new BufferedInputStream(url.openStream()),"UTF-8");
             configlist= (List<DataConfig>) xStream.fromXML( in );
             in.close();
         } catch (Exception e) {

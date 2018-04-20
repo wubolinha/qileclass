@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
         super.onCreate(savedInstanceState);
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
        // setContentView(R.layout.activity_main);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         EventBus.getDefault().register(this);
         new Thread(
                 new Runnable() {
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
 
     private void  initview(){
          mAdapter= new ListFragmentPagerAdapter(getSupportFragmentManager());
+        dataBinding.viewpage.setOffscreenPageLimit(3);
         dataBinding.viewpage.setAdapter(mAdapter);
         dataBinding.viewpage.setCurrentItem(0);
         dataBinding.viewpage.addOnPageChangeListener(this);
