@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import air.edu.qile.R;
+import air.edu.qile.model.bean.ModuleData;
 
 /**
  * Created by Administrator on 2018/4/17.
@@ -19,7 +22,7 @@ import air.edu.qile.R;
 public class FragmentRcycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected Context mContext;
-    protected List mDatas;
+    protected List<ModuleData> mDatas;
 
     public FragmentRcycleAdapter(Context mContext, List mDatas) {
         this.mContext = mContext;
@@ -36,9 +39,14 @@ public class FragmentRcycleAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ModuleData data = mDatas.get(position);
         if (holder instanceof Holder_Card1) {
+            Holder_Card1 card1= (Holder_Card1) holder;
+            card1.title.setText( data.getConfig().getName() );
 
-
+            Picasso.with(mContext)
+                    .load(data.getCover().getUrl() )
+                    .into(card1.cover);
         }
     }
 

@@ -17,8 +17,8 @@ public class ObjectData {
     private long  objsize;
 
 
-    // 文件夹特有属性，   类型数据设置 ，对应 DataConfig.txt
-    private DataConfig  folderConfig;
+    // 文件夹特有属性，   类型数据设置 ，对应 ModuleConfig.txt
+    private ModuleConfig folderConfig;
     //封面 url
     private String      folderCover;
     //封面图片etag
@@ -65,11 +65,11 @@ public class ObjectData {
         this.objsize = objsize;
     }
 
-    public DataConfig getFolderConfig() {
+    public ModuleConfig getFolderConfig() {
         return folderConfig;
     }
 
-    public void setFolderConfig(DataConfig folderConfig) {
+    public void setFolderConfig(ModuleConfig folderConfig) {
         this.folderConfig = folderConfig;
     }
 

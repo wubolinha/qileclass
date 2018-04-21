@@ -1,5 +1,7 @@
 package air.edu.qile.model;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.orhanobut.hawk.Hawk;
@@ -49,6 +51,7 @@ public class OssTokenGet {
     }
 
     public void getAccessToken() {
+       // Log.w("test"," 获取 token  ... "+Thread.currentThread().getName());
         Call<ResponseBody> call = apiInterface.getAccessToken();
         call.enqueue(new Callback<ResponseBody>() {
             @Override

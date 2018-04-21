@@ -13,7 +13,7 @@ import air.edu.qile.R;
  * Created by Administrator on 2018/4/16.
  */
 
-public class Fragment_4 extends Fragment {
+public class Fragment_4 extends BaseFragment {
 
 
     @Override
