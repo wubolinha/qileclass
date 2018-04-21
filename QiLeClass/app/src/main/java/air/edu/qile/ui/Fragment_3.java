@@ -6,10 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import air.edu.qile.R;
-import air.edu.qile.model.DataAccess;
 
 /**
  * Created by Administrator on 2018/4/16.
@@ -29,7 +27,7 @@ public class Fragment_3 extends Fragment {
     private void initdata(){
         Handler  showhandler=new Handler();
 
-        DataAccess.getInstance().getData( "奇乐课堂/故事汇/" );
+   //     DataAccess.getInstance().getData( "奇乐课堂/故事汇/" );
 
     }
 

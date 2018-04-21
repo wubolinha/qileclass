@@ -67,7 +67,7 @@ public class OssBrowser {
     // 显示文件夹下的文件
     // 设定前缀 .eg: "奇乐课堂/微课堂/"
     public void  ShowFolderFile(final String  PrefixPath){
-      //  Log.w("test","ShowFolderFile:"+PrefixPath);
+        Log.w("test","ShowFolderFile:"+PrefixPath);
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
         //   "/" 为文件夹的分隔符
         listObjects.setDelimiter("/");
@@ -132,7 +132,7 @@ public class OssBrowser {
         List<ObjectData> dataList_folder=new ArrayList<>();
         for( ObjectData data:dataList){
             if( data.getFullpath().endsWith(ConfigName) ){
-                //  Log.w("test","解析:"+data);
+                 // Log.w("test","解析:"+data);
                 configlist.addAll( XmlTool.getInstance().ReadFromXML(data.getUrl() ) );
             }
             // 这个对象是文件夹
@@ -143,7 +143,7 @@ public class OssBrowser {
         for (DataConfig  config:  configlist){
            // Log.w("test","config:"+config);
             for(ObjectData folder:dataList_folder){
-               // Log.w("test",folder.getSimplName()+"  folder:"+folder);
+              //  Log.w("test",folder.getSimplName()+"  folder:"+folder);
                 if(config.getName().equals(  folder.getSimplName() )){
                     folder.setFolderConfig( config );
                     //  设置封面 url
@@ -153,6 +153,7 @@ public class OssBrowser {
                         cover_url = ossclient.presignConstrainedObjectURL(BucketName,covername,
                                 30 * 60);
                         folder.setFolderCover( cover_url );
+
                         Logger.w(  covername+"   完整data:"+folder);
                     } catch (ClientException e) {
                         e.printStackTrace();

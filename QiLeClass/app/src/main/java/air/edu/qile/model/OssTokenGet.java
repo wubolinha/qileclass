@@ -36,13 +36,10 @@ public class OssTokenGet {
 
    /****************************************************************/
 
-
-    private OssTokenListen getlisten;
     private ossToken_apiInterface  apiInterface;
     private Retrofit ossToken_retrofit;
 
-    public OssTokenGet(OssTokenListen getlisten) {
-        this.getlisten = getlisten;
+    public OssTokenGet( ) {
         ossToken_retrofit = new Retrofit.Builder()
                 .baseUrl(base_url)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -51,11 +48,7 @@ public class OssTokenGet {
         apiInterface = ossToken_retrofit.create(ossToken_apiInterface.class);
     }
 
-
-
-
     public void getAccessToken() {
-
         Call<ResponseBody> call = apiInterface.getAccessToken();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -79,7 +72,6 @@ public class OssTokenGet {
                     Logger.w(" 获取 token 失败 ................. ");
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 t.printStackTrace();
@@ -90,25 +82,16 @@ public class OssTokenGet {
 
     //  转换为 TokenBean 对象
     private void  TranToObj(String  json){
-
         TokenBean token = JSON.parseObject(  json , TokenBean.class);
 //         Logger.w( "token:\n"+ token.getCredentials().getAccessKeyId()+"\n"+
 //                token.getCredentials().getAccessKeySecret()+"\n"+
 //                token.getCredentials().getSecurityToken()
 //                +"..................");
         Hawk.put(  TokenBean.class.getSimpleName() ,  token );
-
-        getlisten.GetToken(token);
         EventBus.getDefault().post( token );
     }
 
 
-    public interface    OssTokenListen {
-
-
-        public  void GetToken(TokenBean token);
-
-    }
 
 
 }

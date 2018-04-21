@@ -30,15 +30,6 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
        // setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        EventBus.getDefault().register(this);
-        new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        threadStart();
-                    }
-                }
-        ).start();
         initview();
     }
 
@@ -50,23 +41,11 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
         dataBinding.viewpage.addOnPageChangeListener(this);
     }
 
-    public void threadStart ( ){
-
-
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void EventBusEvent(TokenBean bean) {
-
-
-    }
-
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+
     }
 
     /***********    滑动监听 *******************************/
