@@ -8,6 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
+import com.shuyu.gsyvideoplayer.GSYBaseActivityDetail;
+import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder;
+import com.shuyu.gsyvideoplayer.video.ListGSYVideoPlayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,10 +23,11 @@ import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.BaseData;
 import air.edu.qile.model.bean.ModuleData;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends GSYBaseActivityDetail<ListGSYVideoPlayer> {
 
     private String osspath;
     private   RecyclerView detailaty_recycleview;
+    private  ListGSYVideoPlayer detailPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +42,10 @@ public class DetailActivity extends AppCompatActivity {
     private  void initview(){
         detailaty_recycleview= findViewById(R.id.detailaty_recycleview);
         detailaty_recycleview.setLayoutManager(new LinearLayoutManager(this));
+         detailPlayer= findViewById(R.id. detail_player );
 
     }
+
 
 
     private void initdata() {
@@ -50,6 +56,31 @@ public class DetailActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+
+    @Override
+    public ListGSYVideoPlayer getGSYVideoPlayer() {
+        return detailPlayer;
+    }
+
+    @Override
+    public GSYVideoOptionBuilder getGSYVideoOptionBuilder() {
+        //不需要builder的
+        return null;
+    }
+
+    @Override
+    public void clickForFullScreen() {
+
+    }
+
+    @Override
+    public boolean getDetailOrientationRotateAuto() {
+        return true;
+    }
+
+
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void EventBusEvent(Event_BaseData event_baseData) {
@@ -65,6 +96,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
+
 
 
     public static class Event_BaseData {

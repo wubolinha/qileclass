@@ -110,7 +110,8 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if(objdata  instanceof  ModuleData){
                         ModuleData data= (ModuleData) objdata;
                         String osspath=data.getFolder().getFullpath();
-                        Intent intent=new Intent(mContext, DetailActivity.class);
+                         Intent intent=new Intent(mContext, DetailActivity.class);
+
                         intent.putExtra("osspath",osspath);
                         mContext.startActivity( intent );
                     }
@@ -122,7 +123,7 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                         intent.setDataAndType(Uri.parse(url) , "application/x-shockwave-flash");
                         intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mContext.startActivity( intent );
+                       // mContext.startActivity( intent );
                     }
                     break;
             }

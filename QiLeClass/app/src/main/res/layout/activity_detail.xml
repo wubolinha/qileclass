@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,8 +7,15 @@
     tools:context="air.edu.qile.ui.DetailActivity">
 
 
-    <android.support.v7.widget.RecyclerView
 
+
+    <com.shuyu.gsyvideoplayer.video.ListGSYVideoPlayer
+        android:id="@+id/detail_player"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/detail_player"
         android:id="@+id/detailaty_recycleview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,4 +23,4 @@
 
     </android.support.v7.widget.RecyclerView>
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
