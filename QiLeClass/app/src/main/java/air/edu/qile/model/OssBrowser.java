@@ -27,6 +27,7 @@ import air.edu.qile.model.bean.ModuleConfig;
 import air.edu.qile.model.bean.ModuleData;
 import air.edu.qile.model.bean.TokenBean;
 import air.edu.qile.tool.XmlTool;
+import air.edu.qile.ui.DetailActivity;
 
 /**
  * Created by Administrator on 2018/4/11.
@@ -44,9 +45,26 @@ public class OssBrowser {
     private String TokenServer = "http://classqile.duapp.com/";
     private  OSS ossclient;
 
-    public OssBrowser(Context context, TokenBean token) {
+    private static OssBrowser  instance;
+
+    public static OssBrowser  getInstance(){
+        return  instance;
+    }
+
+    //  initInstance  必须先执行
+    public static void  initInstance(Context context,TokenBean token){
+        if(instance==null){
+            instance=new OssBrowser(context,token);
+        }
+    }
+
+    public OssBrowser(Context context,TokenBean token) {
         this.context = context;
-      //  OSSLog.enableLog();
+        initOss(token);
+    }
+
+    private void initOss(TokenBean token){
+        //  OSSLog.enableLog();
         OSSCredentialProvider credentialProvider = new StsGetter(token);
         //该配置类如果不设置，会有默认配置，具体可看该类
         ClientConfiguration conf = new ClientConfiguration();
@@ -56,19 +74,66 @@ public class OssBrowser {
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
         ossclient = new OSSClient(context, EndPoint, credentialProvider);
 
-//        //   测试
-//        String url = null;
-//        try {
-//            url = oss.presignConstrainedObjectURL(BucketName, "test2/吃西瓜.mp4", 30 * 60);
-//        } catch (ClientException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
-    // 显示文件夹下的文件
-    // 设定前缀 .eg: "奇乐课堂/微课堂/"
-    public void  ShowFolderFile(final String  PrefixPath){
+    // 显示这个模块下的所有文件
+    public void  ShowFileinModule(final String  PrefixPath){
+
+        Log.w("test","ShowFileinModule:"+PrefixPath);
+        ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
+        listObjects.setPrefix(PrefixPath);
+        final List<BaseData>  baseDataList=new ArrayList<>();
+        OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
+            @Override
+            public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
+                int filesize=result.getObjectSummaries().size(); // 文件数目
+                for (int i = 0; i < filesize; i++) {
+                    String key=result.getObjectSummaries().get(i).getKey();
+                    if(key.endsWith("/")){
+                        continue;
+                    }
+                    long objsize  =result.getObjectSummaries().get(i).getSize();
+                    String etag=result.getObjectSummaries().get(i).getETag();
+                    String url = null;
+                    try {
+                        url = ossclient.presignConstrainedObjectURL(BucketName,key,30 * 60);
+                    } catch (ClientException e) {
+                        url =null;
+                        e.printStackTrace();
+                    }
+                    BaseData data=new BaseData();
+                    data.setEtag( etag  );
+                    data.setFullpath( key );
+                    data.setSize( objsize );
+                    if( key.endsWith("/")){
+                        data.setFolder(true  );
+                    }else {
+                        data.setFolder(false  );
+                    }
+                    data.setName( new File( key ).getName()  );
+                    data.setUrl(   url );
+                   // Log.w("test","oss data  : "+data );
+                    baseDataList.add( data );
+                }
+                DetailActivity.Event_BaseData eventBaseData=new DetailActivity.Event_BaseData();
+                eventBaseData.cmd="Event_BaseData";
+                eventBaseData.baseDataList=baseDataList;
+                EventBus.getDefault().post( eventBaseData );
+            }
+
+            @Override
+            public void onFailure(ListObjectsRequest request, ClientException clientException, ServiceException serviceException) {
+
+            }
+        });
+        task.waitUntilFinished();
+
+    }
+
+    // 显示文件夹下的模块 设定前缀 .eg: "奇乐课堂/微课堂/"
+    public void  ShowModule(final String  PrefixPath){
+
         Log.w("test","ShowFolderFile:"+PrefixPath);
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
         //   "/" 为文件夹的分隔符
@@ -177,7 +242,11 @@ public class OssBrowser {
 
     }
 
+    public void  OssDestolry(){
 
+
+
+    }
 
     /**************************
      *

@@ -28,6 +28,7 @@ public class BaseFragment  extends Fragment {
 
     protected OssBrowser ossBrowser;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +39,7 @@ public class BaseFragment  extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void EventBusEvent(TokenBean bean) {
-        ossBrowser=new OssBrowser(MyApp.AppContext , bean );
+
 
     }
 

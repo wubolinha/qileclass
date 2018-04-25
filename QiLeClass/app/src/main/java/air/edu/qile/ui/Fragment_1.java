@@ -1,7 +1,6 @@
 package air.edu.qile.ui;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,13 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.orhanobut.logger.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import air.edu.qile.R;
-import air.edu.qile.model.bean.BaseData;
+import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.ModuleData;
 import air.edu.qile.model.bean.TokenBean;
 import io.reactivex.Observable;
@@ -49,11 +46,13 @@ public class Fragment_1 extends BaseFragment {
     @Override
     public void EventBusEvent(TokenBean bean) {
         super.EventBusEvent(bean);
-        ossBrowser.ShowFolderFile(rootDir);
+        OssBrowser.getInstance( ).ShowModule( rootDir );
+
     }
 
     @Override
     public void EventBusEvent(List<ModuleData> moduleDataList) {
+
 
         final List<ModuleData> newModulelist=new ArrayList<>();
         for(ModuleData moduleData: moduleDataList){
@@ -64,7 +63,7 @@ public class Fragment_1 extends BaseFragment {
         if(newModulelist.size()==0){
             return;
         }
-        final FragmentRcycleAdapter  adapter=new FragmentRcycleAdapter(getContext(),newModulelist);
+        final RcycleviewAdapter adapter=new RcycleviewAdapter(getContext(),newModulelist,R.layout.card1);
         Observable.just(  ""   )
                 .subscribeOn(   Schedulers.io() )
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,9 +74,6 @@ public class Fragment_1 extends BaseFragment {
                         recyclerView.setAdapter( adapter );
                     }
                 });
-
-
-
     }
 
 

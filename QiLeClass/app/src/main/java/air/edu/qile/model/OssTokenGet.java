@@ -11,6 +11,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
+import air.edu.qile.MyApp;
 import air.edu.qile.model.bean.TokenBean;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -27,7 +28,7 @@ import retrofit2.http.GET;
  *
  */
 
-public class OssTokenGet {
+public   class OssTokenGet {
 
     public static String  base_url="http://classqile.duapp.com";
     private interface  ossToken_apiInterface{
@@ -90,10 +91,12 @@ public class OssTokenGet {
 //                token.getCredentials().getAccessKeySecret()+"\n"+
 //                token.getCredentials().getSecurityToken()
 //                +"..................");
+        OssBrowser.initInstance(MyApp.AppContext,token);
         Hawk.put(  TokenBean.class.getSimpleName() ,  token );
         EventBus.getDefault().post( token );
-    }
 
+
+    }
 
 
 

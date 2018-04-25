@@ -5,7 +5,7 @@ package air.edu.qile.model.bean;
  *
  *   模块数据，对应oss上的  ModuleSet.xml
 
- <DataConfig>
+ <ModuleConfig>
  <!-- show:是否显示 ， true：在app中显示 ， false：在app中不显示-->
 
  <!-- cardtype:显示的卡片类型 -->
@@ -18,14 +18,14 @@ package air.edu.qile.model.bean;
 
  <!--description：简单描述 -->
 
- </DataConfig>
+ </ModuleConfig>
 
 
  *
  *
  */
 
-public class DataConfig {
+public class ModuleConfig {
 
 
     private  String show;
@@ -85,7 +85,7 @@ public class DataConfig {
 
     @Override
     public String toString() {
-        return "DataConfig{" +
+        return "ModuleConfig{" +
                 "show='" + show + '\'' +
                 ", name='" + name + '\'' +
                 ", cover='" + cover + '\'' +
