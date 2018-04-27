@@ -28,6 +28,8 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     protected Context mContext;
     protected List mDatas;
     private  int cardId;
+    private  adpterClickListen clickListen;
+
 
     public RcycleviewAdapter(Context mContext, List mDatas, int cardId) {
         this.mContext = mContext;
@@ -35,7 +37,9 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.cardId = cardId;
     }
 
-
+    public void setClickListen(adpterClickListen clickListen) {
+        this.clickListen = clickListen;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -117,18 +121,22 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     if(objdata  instanceof  BaseData){
                         BaseData data= (BaseData) objdata;
-                        String url =data.getUrl();
+                        if(clickListen!=null){
+                            clickListen.click(position , mDatas);
+                        }
 
-                        Intent intent=new Intent ();
-
-                        intent.setDataAndType(Uri.parse(url) , "application/x-shockwave-flash");
-                        intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK);
-                       // mContext.startActivity( intent );
                     }
                     break;
             }
 
         }
+    }
+
+
+    public interface  adpterClickListen{
+
+        public void  click(int position  ,List mDatas);
+
     }
 
 
