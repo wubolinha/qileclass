@@ -1,6 +1,7 @@
 package air.edu.qile.ui;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.orhanobut.logger.Logger;
@@ -24,6 +26,7 @@ import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.ListGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,6 +43,7 @@ import air.edu.qile.model.bean.MsgEvent;
 public class DetailUrlActivity extends AppCompatActivity {
 
     private String osspath;
+    private String osscover;
     private RecyclerView detailaty_recycleview;
     private StandardGSYVideoPlayer  detailPlayer;
     private RelativeLayout activity_detail_player;
@@ -63,6 +67,7 @@ public class DetailUrlActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         osspath = getIntent().getStringExtra("osspath");
+        osscover= getIntent().getStringExtra("osscover");
         EventBus.getDefault().register(this);
         initview();
         initdata();
@@ -82,10 +87,18 @@ public class DetailUrlActivity extends AppCompatActivity {
         orientationUtils = new OrientationUtils(this, detailPlayer);
         //初始化不打开外部的旋转
         orientationUtils.setEnable(false);
-        
+
         GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL);
+
+        //增加封面
+        ImageView imageView = new ImageView(this);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageURI(Uri.parse( osscover ));
+
+        Picasso.with(this).load(osscover).into(imageView);
+
         gsyVideoOptionBuilder = new GSYVideoOptionBuilder()
-               // .setThumbImageView(imageView)
+                 .setThumbImageView(imageView)
                 .setIsTouchWiget(true)
                 .setRotateViewAuto(false)
                 .setLockLand(false)
@@ -116,6 +129,7 @@ public class DetailUrlActivity extends AppCompatActivity {
 
         }
 
+
         detailPlayer.getFullscreenButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,7 +156,7 @@ public class DetailUrlActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Logger.w("initdata:"+osspath);
+                Logger.w("initdata:"+osspath+"  osscover:"+osscover);
                 OssBrowser.getInstance().ShowFileinModule(osspath);
             }
         }).start();

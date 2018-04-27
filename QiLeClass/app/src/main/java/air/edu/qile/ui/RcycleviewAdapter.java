@@ -117,6 +117,7 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                           Intent intent=new Intent(mContext, DetailUrlActivity.class);
                       //  Intent intent=new Intent(mContext, DetailActivity.class);
                         intent.putExtra("osspath",osspath);
+                        intent.putExtra("osscover",data.getCover().getUrl());
                         mContext.startActivity( intent );
                     }
                     if(objdata  instanceof  BaseData){
