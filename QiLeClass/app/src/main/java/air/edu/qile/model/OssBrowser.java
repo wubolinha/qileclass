@@ -25,6 +25,7 @@ import java.util.List;
 import air.edu.qile.model.bean.BaseData;
 import air.edu.qile.model.bean.ModuleConfig;
 import air.edu.qile.model.bean.ModuleData;
+import air.edu.qile.model.bean.MsgEvent;
 import air.edu.qile.model.bean.TokenBean;
 import air.edu.qile.tool.XmlTool;
 import air.edu.qile.ui.DetailActivity;
@@ -116,10 +117,11 @@ public class OssBrowser {
                    // Log.w("test","oss data  : "+data );
                     baseDataList.add( data );
                 }
-                DetailActivity.Event_BaseData eventBaseData=new DetailActivity.Event_BaseData();
-                eventBaseData.cmd="Event_BaseData";
-                eventBaseData.baseDataList=baseDataList;
-                EventBus.getDefault().post( eventBaseData );
+                MsgEvent msgEvent=new MsgEvent();
+                msgEvent.setCmd("BaseDataList");
+                msgEvent.setContent("BaseDataList");
+                msgEvent.setListdata(  baseDataList );
+                EventBus.getDefault().post( msgEvent );
             }
 
             @Override

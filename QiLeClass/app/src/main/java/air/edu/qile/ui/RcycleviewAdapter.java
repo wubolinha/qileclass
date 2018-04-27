@@ -114,8 +114,8 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if(objdata  instanceof  ModuleData){
                         ModuleData data= (ModuleData) objdata;
                         String osspath=data.getFolder().getFullpath();
-                         Intent intent=new Intent(mContext, DetailActivity.class);
-
+                          Intent intent=new Intent(mContext, DetailUrlActivity.class);
+                      //  Intent intent=new Intent(mContext, DetailActivity.class);
                         intent.putExtra("osspath",osspath);
                         mContext.startActivity( intent );
                     }
@@ -124,11 +124,9 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         if(clickListen!=null){
                             clickListen.click(position , mDatas);
                         }
-
                     }
                     break;
             }
-
         }
     }
 
