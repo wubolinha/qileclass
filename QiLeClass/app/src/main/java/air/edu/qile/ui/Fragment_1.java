@@ -40,15 +40,9 @@ public class Fragment_1 extends BaseFragment {
     private void initview(View view) {
         recyclerView=view.findViewById(R.id.fg1_recycleview);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
+        OssBrowser.getInstance( ).disPatchTask("ShowModule", rootDir );
     }
 
-    @Override
-    public void EventBusEvent(TokenBean bean) {
-        super.EventBusEvent(bean);
-        OssBrowser.getInstance( ).ShowModule( rootDir );
-
-    }
 
     @Override
     public void EventBusEvent(List<ModuleData> moduleDataList) {

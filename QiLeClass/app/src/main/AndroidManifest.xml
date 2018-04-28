@@ -31,11 +31,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.DetailActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            ></activity>
-
         <activity android:name=".ui.DetailUrlActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"

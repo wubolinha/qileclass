@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 
 import air.edu.qile.MyApp;
+import air.edu.qile.model.bean.TimeTagTokenBean;
 import air.edu.qile.model.bean.TokenBean;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -28,7 +29,7 @@ import retrofit2.http.GET;
  *
  */
 
-public   class OssTokenGet {
+public  abstract class OssTokenGet {
 
     public static String  base_url="http://classqile.duapp.com";
     private interface  ossToken_apiInterface{
@@ -91,13 +92,15 @@ public   class OssTokenGet {
 //                token.getCredentials().getAccessKeySecret()+"\n"+
 //                token.getCredentials().getSecurityToken()
 //                +"..................");
-        OssBrowser.initInstance(MyApp.AppContext,token);
-        Hawk.put(  TokenBean.class.getSimpleName() ,  token );
-        EventBus.getDefault().post( token );
 
+        TimeTagTokenBean timeTagTokenBean  =new TimeTagTokenBean();
+        timeTagTokenBean.setTime(System.currentTimeMillis() );
+        timeTagTokenBean.setTokenBean(  token );
 
+        Hawk.put(  TimeTagTokenBean.class.getSimpleName() ,  timeTagTokenBean );
+        hadGetToken(  timeTagTokenBean );
     }
 
-
+    public abstract void  hadGetToken(TimeTagTokenBean timeTagTokenBean );
 
 }

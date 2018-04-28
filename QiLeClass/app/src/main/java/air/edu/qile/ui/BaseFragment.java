@@ -26,8 +26,6 @@ import air.edu.qile.model.bean.TokenBean;
 
 public class BaseFragment  extends Fragment {
 
-    protected OssBrowser ossBrowser;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,12 +34,6 @@ public class BaseFragment  extends Fragment {
 
     }
 
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void EventBusEvent(TokenBean bean) {
-
-
-    }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void EventBusEvent(List<ModuleData> moduleDataList) {
