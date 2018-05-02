@@ -7,11 +7,13 @@ package air.edu.qile.model.bean;
 public class TaskContent {
     private  String taskname;
     private  String taskparas;
+    private   boolean  isfinish;  //任务是否完成
 
 
-    public TaskContent(String taskname, String taskparas) {
+    public TaskContent(String taskname, String taskparas, boolean isfinish) {
         this.taskname = taskname;
         this.taskparas = taskparas;
+        this.isfinish = isfinish;
     }
 
     public String getTaskname() {
@@ -28,5 +30,13 @@ public class TaskContent {
 
     public void setTaskparas(String taskparas) {
         this.taskparas = taskparas;
+    }
+
+    public boolean isIsfinish() {
+        return isfinish;
+    }
+
+    public void setIsfinish(boolean isfinish) {
+        this.isfinish = isfinish;
     }
 }
