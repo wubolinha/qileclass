@@ -122,7 +122,11 @@ public class OssBrowser {
     }
 
 
-    private void initOss(TokenBean token) {
+    private long ossinittime=0;
+    private synchronized void initOss(TokenBean token) {
+        if(System.currentTimeMillis() -ossinittime < 1000 * 60 * 30) {   //大于30分钟，重新获取
+            return;
+        }
         //  OSSLog.enableLog();
         OSSCredentialProvider credentialProvider = new StsGetter(token);
         //该配置类如果不设置，会有默认配置，具体可看该类
@@ -131,8 +135,10 @@ public class OssBrowser {
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-
+        TimeTagTokenBean timeTagTokenBean = Hawk.get(TimeTagTokenBean.class.getSimpleName());
         ossclient = new OSSClient(MyApp.AppContext, EndPoint, credentialProvider);
+        Log.w("test","初始化  Oss ....");
+        ossinittime=System.currentTimeMillis();
 
     }
 
@@ -268,6 +274,34 @@ public class OssBrowser {
 
     }
 
+
+    /****
+     * 统计一个文件夹下有多少个文件
+     * *****/
+    private void showNumInModule(final String PrefixPath ){
+
+        Log.w("test", "showNumInModule:" + PrefixPath);
+        ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
+        listObjects.setPrefix(PrefixPath);
+        final List<BaseData> baseDataList = new ArrayList<>();
+        OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
+            @Override
+            public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
+                int filesize = result.getObjectSummaries().size(); // 文件数目
+                MsgEvent msgEvent = new MsgEvent();
+                msgEvent.setCmd("showNumInModule");
+                msgEvent.setContent(filesize+"");
+                EventBus.getDefault().post(msgEvent);
+            }
+
+            @Override
+            public void onFailure(ListObjectsRequest request, ClientException clientException, ServiceException serviceException) {
+
+            }
+        });
+        task.waitUntilFinished();
+
+    }
 
     // 注意xml格式必须是  utf-8 无 bom
     private void resolverXML(List<BaseData> dataList, String fatherfolder) {
