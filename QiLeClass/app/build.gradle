@@ -45,6 +45,7 @@ repositories {
 }
 
 
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -82,9 +83,13 @@ dependencies {
 //    compile 'com.github.ctiao:DanmakuFlameMaster:0.4.9'
 
 
-    //完整版引入
+    //视频播放器引入
     compile 'com.shuyu:gsyVideoPlayer-java:4.1.2'
     compile 'com.shuyu:gsyVideoPlayer-armv7a:4.1.2'
 
-//    implementation project(':playerlibrary') // 添加依赖模块
+    // 视频缩略图
+   // compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
+   // compile 'com.github.wseemann:FFmpegMediaMetadataRetriever-armeabi-v7a:1.0.14'
+
+    compile (name:'armv7-fmmr', ext:'aar')
 }
