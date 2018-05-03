@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import air.edu.qile.MyApp;
 import air.edu.qile.model.bean.BaseData;
@@ -51,6 +53,7 @@ public class OssBrowser {
     private  OssTokenGet tokenGet=null;
     private static OssBrowser instance;
     private volatile List<TaskContent>  tasklist=new ArrayList<>();
+    private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
     public static OssBrowser getInstance() {
         if (instance == null) {
@@ -62,7 +65,7 @@ public class OssBrowser {
     // 派遣任务
     public void disPatchTask(String taskname, String paras) {
         Log.w("test","disPatchTask  taskname:"+taskname+"   paras:"+paras);
-        tasklist.add(  new TaskContent(taskname,paras) );
+        tasklist.add(  new TaskContent(taskname,paras,false) );
         if (ossclient==null){    // 每次第一次初始化
             tokenGet( );
             return;
@@ -74,8 +77,8 @@ public class OssBrowser {
                 tokenGet( );
             } else {
                 //没有过期，执行任务
-                Log.w("test","没有过期，执行任务 ........." );
-                doTask( );
+               // Log.w("test","没有过期，执行任务 ........." );
+                DOTASH( );
             }
         } else {
             tokenGet( );
@@ -91,34 +94,50 @@ public class OssBrowser {
                     // 先初始化，再 执行任务
                     Log.w("test","先初始化，再 执行任务 ........." );
                     initOss(timeTagTokenBean.getTokenBean());
-                    doTask( );
+                    DOTASH( );
                 }
             };
         }
         tokenGet.getAccessToken();
     }
 
-    private void doTask( ) {
+
+    private void DOTASH(){
+        fixedThreadPool.execute(tashRunable );
+    }
+
+    private Runnable  tashRunable=new Runnable() {
+        @Override
+        public void run() {
+            doTask();
+        }
+    };
+
+    private synchronized void doTask  ( ) {
         // 从任务队列中 获取 任务，然后执行
         if( tasklist.size()==0 ){
             Log.e("test","任务队列为空 ");
             return;
         }
-        synchronized (tasklist) {   //这里要加锁，不然会出错
-            Iterator<TaskContent> it = tasklist.iterator();
-            while(it.hasNext()) {
-                TaskContent task =  it.next();
-                switch (task.getTaskname()) {
-                    case "ShowModule":
-                        ShowModule(task.getTaskparas());
-                        break;
-                    case "ShowFileinModule":
-                        ShowFileinModule(task.getTaskparas());
-                        break;
-                }
-                it.remove();
+        for(int i=0;i<tasklist.size();i++){
+            TaskContent task =  tasklist.get(i);
+            if(task.isIsfinish()){
+                continue;
             }
+            switch (task.getTaskname()) {
+                case "ShowModule":
+                    ShowModule(task.getTaskparas());
+                    break;
+                case "ShowFileinModule":
+                    ShowFileinModule(task.getTaskparas());
+                    break;
+                case "showNumInModule":
+                    showNumInModule(task.getTaskparas());
+                    break;
+            }
+            task.setIsfinish(true);
         }
+
     }
 
 
@@ -142,9 +161,17 @@ public class OssBrowser {
 
     }
 
+
+    // 获取视频 缩略图
+    public void  getVideoThumbNail(){
+
+
+
+    }
+
+
     // 显示这个模块下的所有文件
     public void ShowFileinModule(final String PrefixPath) {
-
         Log.w("test", "ShowFileinModule:" + PrefixPath);
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
         listObjects.setPrefix(PrefixPath);
@@ -280,18 +307,21 @@ public class OssBrowser {
      * *****/
     private void showNumInModule(final String PrefixPath ){
 
-        Log.w("test", "showNumInModule:" + PrefixPath);
+        Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath);
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
         listObjects.setPrefix(PrefixPath);
-        final List<BaseData> baseDataList = new ArrayList<>();
+
         OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
             @Override
             public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
-                int filesize = result.getObjectSummaries().size(); // 文件数目
+                int filesize = result.getObjectSummaries().size()-1; //文件数目， 因为会包含目录本身，所以会-1，
                 MsgEvent msgEvent = new MsgEvent();
                 msgEvent.setCmd("showNumInModule");
-                msgEvent.setContent(filesize+"");
+                msgEvent.setContent(PrefixPath+"");
+                msgEvent.setExtradata( filesize+"  首" );
                 EventBus.getDefault().post(msgEvent);
+                Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath+"  "+filesize);
+
             }
 
             @Override

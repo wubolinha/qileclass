@@ -8,12 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import air.edu.qile.R;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.ModuleData;
+import air.edu.qile.model.bean.MsgEvent;
 import air.edu.qile.model.bean.TokenBean;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -29,6 +33,7 @@ public class Fragment_3 extends BaseFragment {
 
     private RecyclerView recyclerView;
     private String  rootDir="奇乐课堂/故事汇/";
+    private RcycleviewAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fg_content_3, container, false);
@@ -40,6 +45,7 @@ public class Fragment_3 extends BaseFragment {
         recyclerView=view.findViewById(R.id.fg3_recycleview);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         OssBrowser.getInstance( ).disPatchTask("ShowModule", rootDir );
+
     }
 
 
@@ -51,12 +57,14 @@ public class Fragment_3 extends BaseFragment {
         for(ModuleData moduleData: moduleDataList){
             if(moduleData.getFatherModule().equals( rootDir )){
                 newModulelist.add( moduleData );
+                OssBrowser.getInstance( ).disPatchTask("showNumInModule", moduleData.getFolder().getFullpath() );
+
             }
         }
         if(newModulelist.size()==0){
             return;
         }
-        final RcycleviewAdapter adapter=new RcycleviewAdapter(getContext(),newModulelist,R.layout.card1);
+        adapter=new RcycleviewAdapter(getContext(),newModulelist,R.layout.card1);
         Observable.just(  ""   )
                 .subscribeOn(   Schedulers.io() )
                 .observeOn(AndroidSchedulers.mainThread())
@@ -67,6 +75,25 @@ public class Fragment_3 extends BaseFragment {
                         recyclerView.setAdapter( adapter );
                     }
                 });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void EventBusEvent( MsgEvent msgEvent ) {
+        if(msgEvent.getCmd().equals("showNumInModule")){
+            String path = (String) msgEvent.getContent();
+            String num = (String) msgEvent.getExtradata();
+
+            List mDatas =adapter.getmDatas();
+            for(  int i=0;i<mDatas.size();i++ ){
+                ModuleData moduleData= (ModuleData) mDatas.get(i);
+                if(moduleData.getFolder().getFullpath().equals( path )){
+                    Log.w("test","找到需要改变的 item:"+path);
+                    moduleData.setNumInModule(      num    );
+                    recyclerView.getAdapter().notifyItemChanged( i , moduleData );
+                    return;
+                }
+            }
+        }
     }
 
 }

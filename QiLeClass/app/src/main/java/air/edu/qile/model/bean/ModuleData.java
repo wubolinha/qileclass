@@ -12,6 +12,7 @@ public class ModuleData {
     private  BaseData folder;  //文件夹
     private  BaseData cover;  //封面
     private  ModuleConfig config;  //模块配置
+    private  String  NumInModule="0";  //模块内的文件数目
 
     public BaseData getFolder() {
         return folder;
@@ -45,6 +46,14 @@ public class ModuleData {
         this.fatherModule = fatherModule;
     }
 
+    public String getNumInModule() {
+        return NumInModule;
+    }
+
+    public void setNumInModule(String numInModule) {
+        NumInModule = numInModule;
+    }
+
     @Override
     public String toString() {
         return "ModuleData{" +
@@ -52,6 +61,7 @@ public class ModuleData {
                 ", folder=" + folder +
                 ", cover=" + cover +
                 ", config=" + config +
+                ", NumInModule=" + NumInModule +
                 '}';
     }
 }

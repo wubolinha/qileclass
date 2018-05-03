@@ -12,6 +12,7 @@ public class MsgEvent {
 
     private String cmd;
     private Object content;
+    private Object  extradata;
     private List   listdata;
 
     public String getCmd() {
@@ -37,5 +38,14 @@ public class MsgEvent {
 
     public void setListdata(List listdata) {
         this.listdata = listdata;
+    }
+
+
+    public Object getExtradata() {
+        return extradata;
+    }
+
+    public void setExtradata(Object extradata) {
+        this.extradata = extradata;
     }
 }
