@@ -20,14 +20,14 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 public class VideoInfo {
 
 
-    private Bitmap  thumbitmap;  // 缩略图
+    private byte[]  thumbitmap;  // 缩略图
     private String  duration; //视频时长
 
-    public Bitmap getThumbitmap() {
+    public byte[] getThumbitmap() {
         return thumbitmap;
     }
 
-    public void setThumbitmap(Bitmap thumbitmap) {
+    public void setThumbitmap(byte[] thumbitmap) {
         this.thumbitmap = thumbitmap;
     }
 
@@ -38,9 +38,6 @@ public class VideoInfo {
     public void setDuration(String duration) {
         this.duration = duration;
     }
-
-
-
 
 
 

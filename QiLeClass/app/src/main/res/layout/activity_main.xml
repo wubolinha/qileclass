@@ -1,27 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-
-
-    </data>
-
-
-    <RelativeLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
-        <android.support.v4.view.ViewPager
+    <android.support.v4.view.ViewPager
 
-            android:id="@+id/viewpage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-
-    </RelativeLayout>
+        android:id="@+id/viewpage"
+        app:layout_heightPercent="92%"
+        app:layout_widthPercent="100%" />
 
 
-</layout>
+    <LinearLayout
+        android:id="@+id/navigation"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        app:layout_heightPercent="8%"
+        app:layout_widthPercent="100%">
+
+        <ImageView
+            android:id="@+id/icon1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shuxue_nor"
+             />
+
+        <ImageView
+            android:id="@+id/icon2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/xuexitiandi_nor"
+            />
+
+        <ImageView
+            android:id="@+id/icon3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/yingyu_nor"
+            />
+
+        <ImageView
+            android:id="@+id/icon4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/yuwen_nor"
+            />
+
+
+    </LinearLayout>
+
+
+</android.support.percent.PercentRelativeLayout>
+

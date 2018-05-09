@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,40 +18,39 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 public class ThumbTool {
 
 
-    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+    public   VideoInfo  getVideoInfo( String etag, String url){
 
 
+        VideoInfo info =DiskCache.getInstance().getVideoInfo(etag);
+        if(info == null){
+            Log.w("test","网络获取：  mUri:"+url.toString());
 
-    public   VideoInfo  getVideoInfo(  String url){
-        Log.w("test","mUri:"+url.toString());
-        FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
-        mmr.setDataSource(  url);
-        Bitmap bitmap= mmr.getScaledFrameAtTime( 3000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC,250,180 );
-        // Bitmap bitmap = mmr.getFrameAtTime(2000000, FFmpegMediaMetadataRetriever.OPTION_NEXT_SYNC); // frame at 2 seconds
-        String strDuration = mmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);
-        VideoInfo info=new VideoInfo();
-        info.setDuration(strDuration);
-        info.setThumbitmap(bitmap);
-        mmr.release();
+            FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
+            mmr.setDataSource(  url);
+            Bitmap bitmap= mmr.getScaledFrameAtTime( 3000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC,250,180 );
+            // Bitmap bitmap = mmr.getFrameAtTime(2000000, FFmpegMediaMetadataRetriever.OPTION_NEXT_SYNC); // frame at 2 seconds
+            String strDuration = mmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);
+            info=new VideoInfo();
+            info.setDuration(strDuration);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+            byte[] datas = baos.toByteArray();
+            info.setThumbitmap(datas);
+
+            // 加入缓存
+            DiskCache.getInstance().putVideoInfo(etag, info );
+
+            mmr.release();
+        }else {
+            Log.w("test","使用 缓存  mUri:"+url.toString());
+        }
         return   info;
     }
 
 
 
 
-    // 加入处理队列
-    public   void addToHanderQueue(final String   url){
-
-        fixedThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                getVideoInfo(url);
-            }
-        });
-
-
-    }
 
 
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item android:drawable="@drawable/yingyu_nor" android:duration="50" />
+    <item android:drawable="@drawable/yingyu_pre_01" android:duration="50" />
+    <item android:drawable="@drawable/yingyu_pre_02" android:duration="50" />
+    <item android:drawable="@drawable/yingyu_pre_03" android:duration="50" />
+    <item android:drawable="@drawable/yingyu_pre_04" android:duration="50" />
+
+
+</animation-list>
+

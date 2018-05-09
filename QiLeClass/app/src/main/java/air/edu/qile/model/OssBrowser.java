@@ -78,7 +78,7 @@ public class OssBrowser {
             } else {
                 //没有过期，执行任务
                // Log.w("test","没有过期，执行任务 ........." );
-                DOTASH( );
+                DOTASK( );
             }
         } else {
             tokenGet( );
@@ -94,7 +94,7 @@ public class OssBrowser {
                     // 先初始化，再 执行任务
                     Log.w("test","先初始化，再 执行任务 ........." );
                     initOss(timeTagTokenBean.getTokenBean());
-                    DOTASH( );
+                    DOTASK( );
                 }
             };
         }
@@ -102,7 +102,7 @@ public class OssBrowser {
     }
 
 
-    private void DOTASH(){
+    private void DOTASK(){
         fixedThreadPool.execute(tashRunable );
     }
 
@@ -155,9 +155,12 @@ public class OssBrowser {
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
         TimeTagTokenBean timeTagTokenBean = Hawk.get(TimeTagTokenBean.class.getSimpleName());
-        ossclient = new OSSClient(MyApp.AppContext, EndPoint, credentialProvider);
+        if (System.currentTimeMillis() - timeTagTokenBean.getTime() < 1000 * 60 * 30) {   //小yu30分钟，
+            ossclient = new OSSClient(MyApp.AppContext, EndPoint, credentialProvider);
+        }
         Log.w("test","初始化  Oss ....");
         ossinittime=System.currentTimeMillis();
+
 
     }
 

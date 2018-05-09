@@ -156,7 +156,7 @@ public class DetailUrlActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Logger.w("initdata:"+osspath+"  osscover:"+osscover);
+                Log.w("test","initdata:"+osspath+"  osscover:"+osscover);
                 OssBrowser.getInstance().disPatchTask("ShowFileinModule",osspath);
             }
         }).start();
