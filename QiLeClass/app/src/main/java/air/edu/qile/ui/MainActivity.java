@@ -1,7 +1,10 @@
 package air.edu.qile.ui;
 
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,28 +12,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.orhanobut.logger.Logger;
-
-import org.greenrobot.eventbus.EventBus;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import android.widget.TextView;
 
 import air.edu.qile.R;
-import air.edu.qile.databinding.ActivityMainBinding;
-import air.edu.qile.model.OssBrowser;
-import air.edu.qile.model.OssTokenGet;
-import air.edu.qile.model.bean.TokenBean;
-import air.edu.qile.ui.ListFragmentPagerAdapter;
 
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, OnClickListener {
 
     private ImageView[] iconlist=new ImageView[4];
+    private TextView[]  tvlist=new TextView[4];
     private int[]  backgroundlist={R.drawable.item1_anim,R.drawable.item2_anim,R.drawable.item3_anim,R.drawable.item4_anim};
     private  ViewPager viewpage;
+    private Handler showhandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     private void initview() {
+        showhandler=new Handler();
         ListFragmentPagerAdapter  mAdapter = new ListFragmentPagerAdapter(getSupportFragmentManager());
         viewpage = findViewById(R.id.viewpage);
         viewpage.setOffscreenPageLimit(3);
@@ -51,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         iconlist[1] = findViewById(R.id.icon2);
         iconlist[2] = findViewById(R.id.icon3);
         iconlist[3] = findViewById(R.id.icon4);
+        tvlist[0] = findViewById(R.id.textv1);
+        tvlist[1] = findViewById(R.id.textv2);
+        tvlist[2] = findViewById(R.id.textv3);
+        tvlist[3] = findViewById(R.id.textv4);
 
         iconlist[0].setOnClickListener(this);
         iconlist[1].setOnClickListener(this);
@@ -82,14 +80,23 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private void iconReset(int index) {
         // Toast.makeText(this,"index:"+index,Toast.LENGTH_SHORT).show();
-        iconlist[0] .setBackgroundResource(R.drawable.shuxue_nor);
-        iconlist[1].setBackgroundResource(R.drawable.xuexitiandi_nor);
-        iconlist[2].setBackgroundResource(R.drawable.yingyu_nor);
-        iconlist[3].setBackgroundResource(R.drawable.yuwen_nor);
-        iconlist[index] .setBackgroundResource(backgroundlist[index]);
-        AnimationDrawable anim = (AnimationDrawable) iconlist[index] .getBackground();
-        anim.start();
+        for(int i=0;i<iconlist.length;i++){
+            ImageView   iv=iconlist[i];
+            AnimationDrawable temp_anim = (AnimationDrawable) iv .getBackground();
+            if(i==index){
+                temp_anim.start();
+            }else {
+                temp_anim.stop();
+                temp_anim.selectDrawable(0);
+            }
+        }
         viewpage.setCurrentItem(index);
+        for(TextView tv:tvlist){
+            tv.setTextColor(Color.BLACK);
+            tv.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+        }
+        tvlist[index].setTextColor(Color.WHITE);
+        tvlist[index] .setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
     }
 
     @Override

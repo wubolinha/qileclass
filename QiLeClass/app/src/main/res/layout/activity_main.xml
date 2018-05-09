@@ -10,7 +10,7 @@
     <android.support.v4.view.ViewPager
 
         android:id="@+id/viewpage"
-        app:layout_heightPercent="92%"
+        app:layout_heightPercent="95%"
         app:layout_widthPercent="100%" />
 
 
@@ -26,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/shuxue_nor"
+            android:background="@drawable/item1_anim"
              />
 
         <ImageView
@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/xuexitiandi_nor"
+            android:background="@drawable/item2_anim"
             />
 
         <ImageView
@@ -42,11 +42,65 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/yingyu_nor"
+            android:background="@drawable/item3_anim"
             />
 
         <ImageView
             android:id="@+id/icon4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/item4_anim"
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        app:layout_heightPercent="8%"
+        app:layout_widthPercent="100%">
+
+        <TextView
+            android:textColor="@android:color/black"
+            android:gravity="center_horizontal|bottom"
+            android:text="@string/weiketang"
+            android:id="@+id/textv1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shuxue_nor"
+            />
+
+        <TextView
+            android:text="@string/yingyuehui"
+            android:textColor="@android:color/black"
+            android:gravity="center_horizontal|bottom"
+            android:id="@+id/textv2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/xuexitiandi_nor"
+            />
+
+        <TextView
+            android:text="@string/gushihui"
+            android:textColor="@android:color/black"
+            android:gravity="center_horizontal|bottom"
+            android:id="@+id/textv3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/yingyu_nor"
+            />
+
+        <TextView
+            android:text="@string/xuexizhushou"
+            android:textColor="@android:color/black"
+            android:gravity="center_horizontal|bottom"
+            android:id="@+id/textv4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -55,7 +109,6 @@
 
 
     </LinearLayout>
-
 
 </android.support.percent.PercentRelativeLayout>
 
