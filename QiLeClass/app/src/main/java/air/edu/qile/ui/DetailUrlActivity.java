@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 import com.shuyu.gsyvideoplayer.GSYBaseActivityDetail;
@@ -40,6 +41,7 @@ import air.edu.qile.R;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.BaseData;
 import air.edu.qile.model.bean.MsgEvent;
+import air.edu.qile.model.bean.TokenBean;
 import air.edu.qile.tool.CommonTool;
 
 public class DetailUrlActivity extends AppCompatActivity {
@@ -90,6 +92,7 @@ public class DetailUrlActivity extends AppCompatActivity {
         //增加封面
         ImageView imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
         try {
             osscover = CommonTool.encode(osscover,"UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -98,21 +101,15 @@ public class DetailUrlActivity extends AppCompatActivity {
         Picasso.with(this).load(osscover).into(imageView);
 
 
-        try {
-            osscover = CommonTool.encode(osscover,"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Picasso.with(this).load(osscover).into(imageView);
         gsyVideoOptionBuilder = new GSYVideoOptionBuilder()
-                 .setThumbImageView(imageView)
+                .setThumbImageView(imageView)
                 .setIsTouchWiget(true)
                 .setRotateViewAuto(false)
                 .setLockLand(false)
                 .setShowFullAnimation(false)
                 .setNeedLockFull(true)
                 .setSeekRatio(1)
-                 .setUrl("")
+                .setUrl("")
                 .setCacheWithPlay(cache)
                 .setVideoAllCallBack(new GSYSampleCallBack() {
                     @Override
@@ -152,6 +149,7 @@ public class DetailUrlActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void initdata() {
@@ -182,6 +180,11 @@ public class DetailUrlActivity extends AppCompatActivity {
                 playVideo(  data.getUrl() , data.getName() );
             }
         });
+        if( msgEvent.getListdata().size() >0 ){
+            BaseData data = (BaseData) msgEvent.getListdata().get(0);
+            reSetCover( data.getUrl() , data.getName()   );
+        }
+
     }
 
 
@@ -229,6 +232,15 @@ public class DetailUrlActivity extends AppCompatActivity {
         return detailPlayer;
     }
 
+    //重新设置封面的播放地址
+    private void reSetCover( String url , String name){
+        detailPlayer.release();
+        gsyVideoOptionBuilder.setUrl(url)
+                .setCacheWithPlay(cache)
+                .setVideoTitle(name)
+                .build(detailPlayer);
+        gsyVideoOptionBuilder.build(detailPlayer);
+    }
     private void playVideo(   String url , String name) {
         detailPlayer.release();
         gsyVideoOptionBuilder.setUrl(url)
@@ -241,7 +253,7 @@ public class DetailUrlActivity extends AppCompatActivity {
             public void run() {
                 detailPlayer.startPlayLogic();
             }
-        }, 1000);
+        }, 100);
     }
 
 

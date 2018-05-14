@@ -113,7 +113,7 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 try {
                     card1.title.setText(data.getName());
                     card1.cover.setTag(  data.getUrl() );
-                    ImageCacheTool.syncPutImageToView(data.getEtag() , data.getUrl() , card1.cover  );
+                    ImageCacheTool.syncPutImageToView(data.getEtag() , data.getUrl() , card1.cover ,card1.number );
 
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();
@@ -145,7 +145,6 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             card1rlt.setOnClickListener(this);
 
             number = itemView.findViewById(R.id.number);
-
         }
 
         @Override

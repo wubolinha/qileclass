@@ -6,8 +6,11 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -54,19 +57,27 @@ public class ImageCacheTool {
 
 
     // 异步显示图片
-    public static void syncPutImageToView(final String etag, final String imageurl, final ImageView view){
+    public static void syncPutImageToView(final String etag, final String imageurl, final ImageView thumbview,  final TextView numtext){
 
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                String urltag= (String) view.getTag();
-                if(urltag.equals( imageurl )){
-                    VideoInfo info =  ImageCacheTool.getVideoInfo(etag, imageurl);
+                String urltag= (String) thumbview.getTag();
+                String img_url = imageurl;
+                if(urltag.equals( img_url )){
+                    final VideoInfo info =  ImageCacheTool.getVideoInfo(etag, img_url);
                     final Bitmap bitmap = BitmapFactory.decodeByteArray(info.getThumbitmap(), 0, info.getThumbitmap().length);
-                    view.post(new Runnable() {
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("mm分ss秒");//这里想要只保留分秒可以写成"mm:ss"
+                    formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+                    final String hms = formatter.format(Long.parseLong( info.getDuration() ));
+
+
+                    thumbview.post(new Runnable() {
                         @Override
                         public void run() {
-                            view.setImageBitmap(bitmap);
+                            thumbview.setImageBitmap(bitmap);
+                            numtext.setText(hms );
                         }
                     });
 

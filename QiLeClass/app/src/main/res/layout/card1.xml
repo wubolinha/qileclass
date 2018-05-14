@@ -6,6 +6,7 @@
 
 
     <RelativeLayout
+        android:background="?android:attr/selectableItemBackground"
         android:id="@+id/card1rlt"
         android:padding="2dp"
         android:layout_width="match_parent"

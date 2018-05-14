@@ -104,7 +104,9 @@ public class OssBrowser {
             // Log.w("test","已经初始化 ....");
             return;
         }
+
         tokenGet.getAccessToken();
+
     }
 
 
@@ -153,6 +155,9 @@ public class OssBrowser {
     private long ossinittime = 0;
 
     private synchronized void initOss(TokenBean token) {
+        if( token ==null){
+            return;
+        }
         if (System.currentTimeMillis() - ossinittime < 1000 * 60 * 30) {   //大于30分钟，重新获取
            // Log.w("test","已经初始化 ....");
             return;
@@ -171,9 +176,7 @@ public class OssBrowser {
         }
         Log.w("test", "初始化  Oss ...." + token.getRequestId());
         ossinittime = System.currentTimeMillis();
-
     }
-
 
     // 获取视频 缩略图
     public void getVideoThumbNail() {
@@ -393,13 +396,15 @@ public class OssBrowser {
      *
      * **************************************/
     class StsGetter extends OSSFederationCredentialProvider {
-        private OSSFederationToken ossFederationToken;
-        String ak;
+         String ak;
         String sk;
         String token;
         String expiration;
 
         public StsGetter(TokenBean bean) {
+            if(bean==null){
+                return;
+            }
             this.ak = bean.getCredentials().getAccessKeyId();
             this.sk = bean.getCredentials().getAccessKeySecret();
             this.token = bean.getCredentials().getSecurityToken();
