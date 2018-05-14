@@ -1,5 +1,6 @@
 package air.edu.qile.model;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
@@ -19,6 +20,7 @@ import com.orhanobut.logger.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,15 +46,13 @@ import air.edu.qile.tool.XmlTool;
 
 public class OssBrowser {
 
-
     private String ConfigName = "DataConfig.txt";
     private String EndPoint = "oss-cn-shenzhen.aliyuncs.com";
-    private String BucketName = "shareworld";
-    private String TokenServer = "http://classqile.duapp.com/";
+    private String BucketName = "childrenedu";
     private OSSClient ossclient;
-    private  OssTokenGet tokenGet=null;
+    private OssTokenGet tokenGet = null;
     private static OssBrowser instance;
-    private volatile List<TaskContent>  tasklist=new ArrayList<>();
+    private volatile List<TaskContent> tasklist = new ArrayList<>();
     private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
     public static OssBrowser getInstance() {
@@ -64,37 +64,37 @@ public class OssBrowser {
 
     // 派遣任务
     public void disPatchTask(String taskname, String paras) {
-        Log.w("test","disPatchTask  taskname:"+taskname+"   paras:"+paras);
-        tasklist.add(  new TaskContent(taskname,paras,false) );
-        if (ossclient==null){    // 每次第一次初始化
-            tokenGet( );
+        Log.w("test", "disPatchTask  taskname:" + taskname + "   paras:" + paras);
+        tasklist.add(new TaskContent(taskname, paras, false));
+        if (ossclient == null) {    // 每次第一次初始化
+            tokenGet();
             return;
         }
-        if (Hawk.contains(TimeTagTokenBean.class.getSimpleName())  ) {
+        if (Hawk.contains(TimeTagTokenBean.class.getSimpleName())) {
             // 先判断 token 是否过期，如果过期 那就重新获取
             TimeTagTokenBean timeTagTokenBean = Hawk.get(TimeTagTokenBean.class.getSimpleName());
             if (System.currentTimeMillis() - timeTagTokenBean.getTime() >= 1000 * 60 * 30) {   //大于30分钟，重新获取
-                tokenGet( );
+                tokenGet();
             } else {
                 //没有过期，执行任务
-               // Log.w("test","没有过期，执行任务 ........." );
-                DOTASK( );
+                // Log.w("test","没有过期，执行任务 ........." );
+                DOTASK();
             }
         } else {
-            tokenGet( );
+            tokenGet();
         }
     }
 
     // 获取 token
-    private void tokenGet( ) {
-        if(tokenGet==null){
+    private void tokenGet() {
+        if (tokenGet == null) {
             tokenGet = new OssTokenGet() {
                 @Override
                 public void hadGetToken(TimeTagTokenBean timeTagTokenBean) {
                     // 先初始化，再 执行任务
-                    Log.w("test","先初始化，再 执行任务 ........." );
+                    Log.w("test", "先初始化，再 执行任务 .........");
                     initOss(timeTagTokenBean.getTokenBean());
-                    DOTASK( );
+                    DOTASK();
                 }
             };
         }
@@ -102,26 +102,26 @@ public class OssBrowser {
     }
 
 
-    private void DOTASK(){
-        fixedThreadPool.execute(tashRunable );
+    private void DOTASK() {
+        fixedThreadPool.execute(tashRunable);
     }
 
-    private Runnable  tashRunable=new Runnable() {
+    private Runnable tashRunable = new Runnable() {
         @Override
         public void run() {
             doTask();
         }
     };
 
-    private synchronized void doTask  ( ) {
+    private synchronized void doTask() {
         // 从任务队列中 获取 任务，然后执行
-        if( tasklist.size()==0 ){
-            Log.e("test","任务队列为空 ");
+        if (tasklist.size() == 0) {
+            Log.e("test", "任务队列为空 ");
             return;
         }
-        for(int i=0;i<tasklist.size();i++){
-            TaskContent task =  tasklist.get(i);
-            if(task.isIsfinish()){
+        for (int i = 0; i < tasklist.size(); i++) {
+            TaskContent task = tasklist.get(i);
+            if (task.isIsfinish()) {
                 continue;
             }
             switch (task.getTaskname()) {
@@ -134,6 +134,9 @@ public class OssBrowser {
                 case "showNumInModule":
                     showNumInModule(task.getTaskparas());
                     break;
+                case "init":
+                    Log.w("test","  ");
+                    break;
             }
             task.setIsfinish(true);
         }
@@ -141,9 +144,11 @@ public class OssBrowser {
     }
 
 
-    private long ossinittime=0;
+    private long ossinittime = 0;
+
     private synchronized void initOss(TokenBean token) {
-        if(System.currentTimeMillis() -ossinittime < 1000 * 60 * 30) {   //大于30分钟，重新获取
+        if (System.currentTimeMillis() - ossinittime < 1000 * 60 * 30) {   //大于30分钟，重新获取
+           // Log.w("test","已经初始化 ....");
             return;
         }
         //  OSSLog.enableLog();
@@ -158,31 +163,33 @@ public class OssBrowser {
         if (System.currentTimeMillis() - timeTagTokenBean.getTime() < 1000 * 60 * 30) {   //小yu30分钟，
             ossclient = new OSSClient(MyApp.AppContext, EndPoint, credentialProvider);
         }
-        Log.w("test","初始化  Oss ....");
-        ossinittime=System.currentTimeMillis();
-
+        Log.w("test", "初始化  Oss ...." + token.getRequestId());
+        ossinittime = System.currentTimeMillis();
 
     }
 
 
     // 获取视频 缩略图
-    public void  getVideoThumbNail(){
-
+    public void getVideoThumbNail() {
 
 
     }
 
 
     // 显示这个模块下的所有文件
-    public void ShowFileinModule(final String PrefixPath) {
+    public void ShowFileinModule(String PrefixPath) {
+
         Log.w("test", "ShowFileinModule:" + PrefixPath);
+
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
         listObjects.setPrefix(PrefixPath);
         final List<BaseData> baseDataList = new ArrayList<>();
         OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
             @Override
             public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
+
                 int filesize = result.getObjectSummaries().size(); // 文件数目
+                Log.w("test", "请求成功.......文件数目: " + filesize);
                 for (int i = 0; i < filesize; i++) {
                     String key = result.getObjectSummaries().get(i).getKey();
                     if (key.endsWith("/")) {
@@ -208,7 +215,7 @@ public class OssBrowser {
                     }
                     data.setName(new File(key).getName());
                     data.setUrl(url);
-                    // Log.w("test","oss data  : "+data );
+                    Log.w("test", "oss data  : " + data);
                     baseDataList.add(data);
                 }
                 MsgEvent msgEvent = new MsgEvent();
@@ -290,7 +297,6 @@ public class OssBrowser {
                     data.setUrl(url);
                     //   Log.w("test","oss data  : "+data );
                     baseDataList.add(data);
-
                 }
                 resolverXML(baseDataList, PrefixPath);
             }
@@ -308,7 +314,7 @@ public class OssBrowser {
     /****
      * 统计一个文件夹下有多少个文件
      * *****/
-    private void showNumInModule(final String PrefixPath ){
+    private void showNumInModule(final String PrefixPath) {
 
         Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath);
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
@@ -317,13 +323,13 @@ public class OssBrowser {
         OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
             @Override
             public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
-                int filesize = result.getObjectSummaries().size()-1; //文件数目， 因为会包含目录本身，所以会-1，
+                int filesize = result.getObjectSummaries().size() - 1; //文件数目， 因为会包含目录本身，所以会-1，
                 MsgEvent msgEvent = new MsgEvent();
                 msgEvent.setCmd("showNumInModule");
-                msgEvent.setContent(PrefixPath+"");
-                msgEvent.setExtradata( filesize+"  首" );
+                msgEvent.setContent(PrefixPath + "");
+                msgEvent.setExtradata(filesize + "  首");
                 EventBus.getDefault().post(msgEvent);
-                Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath+"  "+filesize);
+                Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath + "  " + filesize);
 
             }
 

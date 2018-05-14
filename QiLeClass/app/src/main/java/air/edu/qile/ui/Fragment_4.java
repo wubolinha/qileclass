@@ -15,7 +15,7 @@ import air.edu.qile.R;
 
 public class Fragment_4 extends BaseFragment {
 
-
+    public static String fg_tag="";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fg_content_4, container, false);

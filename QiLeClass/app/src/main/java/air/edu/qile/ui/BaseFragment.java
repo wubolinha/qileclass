@@ -18,6 +18,7 @@ import air.edu.qile.MyApp;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.OssTokenGet;
 import air.edu.qile.model.bean.ModuleData;
+import air.edu.qile.model.bean.MsgEvent;
 import air.edu.qile.model.bean.TokenBean;
 
 /**
@@ -40,7 +41,10 @@ public class BaseFragment  extends Fragment {
 
 
     }
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky=true)
+    public void EventBusEvent( MsgEvent msgEvent ) {
 
+    }
 
     @Override
     public void onDestroy() {

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import air.edu.qile.R;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.BaseData;
 import air.edu.qile.model.bean.ModuleData;
+import air.edu.qile.model.bean.OpenMuduleData;
 import air.edu.qile.model.bean.VideoInfo;
 import air.edu.qile.tool.DiskCache;
 import air.edu.qile.tool.ThumbTool;
@@ -35,8 +37,8 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     protected Context mContext;
     protected List mDatas;
-    private  int cardId;
-    private  adpterClickListen clickListen;
+    private int cardId;
+    private adpterClickListen clickListen;
 
 
     public RcycleviewAdapter(Context mContext, List mDatas, int cardId) {
@@ -63,54 +65,60 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Object objdata = mDatas.get(position);
-        if(objdata  instanceof  ModuleData){
-            final ModuleData data = (ModuleData) objdata;
+        if (objdata instanceof OpenMuduleData) {
+            final OpenMuduleData data = (OpenMuduleData) objdata;
             if (holder instanceof Holder_Card) {
-                final Holder_Card card1= (Holder_Card) holder;
-                card1.card1rlt.setTag( position );
-                card1.number.setText( data.getNumInModule() +"" );
+                final Holder_Card card1 = (Holder_Card) holder;
+                card1.card1rlt.setTag(position);
+                card1.number.setText(data.getNumInModule() + "");
                 try {
-                    card1.title.setText( data.getConfig().getName() );
-                    final Bitmap bitmap= DiskCache.getInstance().getImage( data.getCover().getEtag() );
-                    if( bitmap==null){
-                        // 首先获取缓存，如果缓存不存在，
-                        // Picasso.with(mContext).load(data.getCover().getUrl() ).into(card1.cover);
-                        Picasso.with(mContext).load(data.getCover().getUrl() ).into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap netbitmap, Picasso.LoadedFrom from) {
-                                card1.cover.setImageBitmap( netbitmap );
-                                DiskCache.getInstance().putImage( data.getCover().getEtag() , netbitmap);
-                            }
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                            }
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            }
-                        });
-                    }else {
-                        card1.cover.setImageBitmap( bitmap );
-                    }
+                    card1.title.setText(data.getConfig().getName());
+                    final String coverurl = data.getFatherurl() + data.getConfig().getCover();
 
-                }catch (NullPointerException  ex){
+                    Picasso.with(mContext).load(coverurl).into(card1.cover);
+
+
+//                    final Bitmap bitmap= DiskCache.getInstance().getImage(  coverurl   );
+//                    if( bitmap==null){
+//                        // 首先获取缓存，如果缓存不存在，
+//                        Log.w("test","网络  coverurl:"+coverurl);
+//                        // Picasso.with(mContext).load(data.getCover().getUrl() ).into(card1.cover);
+//                        Picasso.with(mContext).load(coverurl ).into(new Target() {
+//                            @Override
+//                            public void onBitmapLoaded(Bitmap netbitmap, Picasso.LoadedFrom from) {
+//                                card1.cover.setImageBitmap( netbitmap );
+//                                DiskCache.getInstance().putImage( coverurl , netbitmap);
+//                            }
+//                            @Override
+//                            public void onBitmapFailed(Drawable errorDrawable) {
+//                            }
+//                            @Override
+//                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+//                            }
+//                        });
+//                    }else {
+//                        Log.w("test","缓存  coverurl:"+coverurl);
+//                        card1.cover.setImageBitmap( bitmap );
+//                    }
+
+                } catch (NullPointerException ex) {
                     ex.printStackTrace();
                 }
 
             }
-        }
-        else  if(objdata  instanceof  BaseData){
+        } else if (objdata instanceof BaseData) {
             BaseData data = (BaseData) objdata;
             if (holder instanceof Holder_Card) {
-                Holder_Card card1= (Holder_Card) holder;
-                card1.card1rlt.setTag( position );
+                Holder_Card card1 = (Holder_Card) holder;
+                card1.card1rlt.setTag(position);
                 try {
-                    card1.title.setText( data.getName());
+                    card1.title.setText(data.getName());
 
-                    VideoInfo info= new ThumbTool ().getVideoInfo( data.getEtag(),  data.getUrl() );
-                    Bitmap bitmap = BitmapFactory.decodeByteArray( info.getThumbitmap(), 0, info.getThumbitmap().length);
-                    card1.cover.setImageBitmap( bitmap );
+                    VideoInfo info = new ThumbTool().getVideoInfo(data.getEtag(), data.getUrl());
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(info.getThumbitmap(), 0, info.getThumbitmap().length);
+                    card1.cover.setImageBitmap(bitmap);
 
-                }catch (NullPointerException  ex){
+                } catch (NullPointerException ex) {
                     ex.printStackTrace();
                 }
 
@@ -127,40 +135,43 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public class Holder_Card extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView cover;
-        public TextView title,number;
+        public TextView title, number;
         public RelativeLayout card1rlt;
+
         //实现的方法
         public Holder_Card(View itemView) {
             super(itemView);
-            cover =  itemView.findViewById(R.id.cover);
-            title =  itemView.findViewById(R.id.title);
+            cover = itemView.findViewById(R.id.cover);
+            title = itemView.findViewById(R.id.title);
 
-            card1rlt= itemView.findViewById(R.id.card1rlt);
-            card1rlt.setOnClickListener( this);
+            card1rlt = itemView.findViewById(R.id.card1rlt);
+            card1rlt.setOnClickListener(this);
 
-            number= itemView.findViewById(R.id.number);
+            number = itemView.findViewById(R.id.number);
 
         }
 
         @Override
         public void onClick(View view) {
-            switch (view.getId()){
+            switch (view.getId()) {
                 case R.id.card1rlt:
                     int position = (int) view.getTag();
                     Object objdata = mDatas.get(position);
-                    if(objdata  instanceof  ModuleData){
-                        ModuleData data= (ModuleData) objdata;
-                        String osspath=data.getFolder().getFullpath();
-                          Intent intent=new Intent(mContext, DetailUrlActivity.class);
-                      //  Intent intent=new Intent(mContext, DetailActivity.class);
-                        intent.putExtra("osspath",osspath);
-                        intent.putExtra("osscover",data.getCover().getUrl());
-                        mContext.startActivity( intent );
+                    if (objdata instanceof OpenMuduleData) {
+                        OpenMuduleData data = (OpenMuduleData) objdata;
+
+                        String osspath = data.getFatherurl() + data.getConfig().getName();
+                        String coverurl = data.getFatherurl() + data.getConfig().getCover();
+
+                        Intent intent = new Intent(mContext, DetailUrlActivity.class);
+                        intent.putExtra("osspath", osspath+"/");
+                        intent.putExtra("osscover", coverurl);
+                        mContext.startActivity(intent);
                     }
-                    if(objdata  instanceof  BaseData){
-                        BaseData data= (BaseData) objdata;
-                        if(clickListen!=null){
-                            clickListen.click(position , mDatas);
+                    if (objdata instanceof BaseData) {
+                        BaseData data = (BaseData) objdata;
+                        if (clickListen != null) {
+                            clickListen.click(position, mDatas);
                         }
                     }
                     break;
@@ -169,9 +180,9 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
 
-    public interface  adpterClickListen{
+    public interface adpterClickListen {
 
-        public void  click(int position  ,List mDatas);
+        public void click(int position, List mDatas);
 
     }
 

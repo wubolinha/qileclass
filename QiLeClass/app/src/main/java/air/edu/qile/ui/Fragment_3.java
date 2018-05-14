@@ -18,7 +18,9 @@ import air.edu.qile.R;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.ModuleData;
 import air.edu.qile.model.bean.MsgEvent;
+import air.edu.qile.model.bean.OpenMuduleData;
 import air.edu.qile.model.bean.TokenBean;
+import air.edu.qile.tool.CommonTool;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -34,6 +36,9 @@ public class Fragment_3 extends BaseFragment {
     private RecyclerView recyclerView;
     private String  rootDir="奇乐课堂/故事汇/";
     private RcycleviewAdapter adapter;
+    public static String fg_tag="故事汇";
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fg_content_3, container, false);
@@ -44,7 +49,7 @@ public class Fragment_3 extends BaseFragment {
     private void initview(View view) {
         recyclerView=view.findViewById(R.id.fg3_recycleview);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        OssBrowser.getInstance( ).disPatchTask("ShowModule", rootDir );
+    //    OssBrowser.getInstance( ).disPatchTask("ShowModule", rootDir );
 
     }
 
@@ -77,23 +82,50 @@ public class Fragment_3 extends BaseFragment {
                 });
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void EventBusEvent( MsgEvent msgEvent ) {
-        if(msgEvent.getCmd().equals("showNumInModule")){
+    @Override
+    public void EventBusEvent(MsgEvent msgEvent) {
+        if (msgEvent.getCmd().equals("showNumInModule")) {
             String path = (String) msgEvent.getContent();
             String num = (String) msgEvent.getExtradata();
 
-            List mDatas =adapter.getmDatas();
-            for(  int i=0;i<mDatas.size();i++ ){
-                ModuleData moduleData= (ModuleData) mDatas.get(i);
-                if(moduleData.getFolder().getFullpath().equals( path )){
-                    Log.w("test","找到需要改变的 item:"+path);
-                    moduleData.setNumInModule(      num    );
-                    recyclerView.getAdapter().notifyItemChanged( i , moduleData );
+            Log.w("test", "path:" + path + "  num:" + num);
+
+
+            List mDatas = adapter.getmDatas();
+            for (int i = 0; i < mDatas.size(); i++) {
+                OpenMuduleData data = (OpenMuduleData) mDatas.get(i);
+                if (path.contains(data.getConfig().getName())) {
+                    Log.w("test", "找到需要改变的 item:" + path);
+                    data.setNumInModule(num);
+                    recyclerView.getAdapter().notifyItemChanged(i, data);
                     return;
                 }
             }
         }
+        if (msgEvent.getCmd().equals("class_" + fg_tag)) {
+            Log.w("test", "收到 ........ msgEvent：" + msgEvent.getCmd());
+            final List<OpenMuduleData> openMuduleDataList = msgEvent.getListdata();
+            if (openMuduleDataList.size() == 0) {
+                return;
+            }
+            for (OpenMuduleData openMuduleData : openMuduleDataList) {
+                String foldername = openMuduleData.getFatherurl() + openMuduleData.getConfig().getName();
+                OssBrowser.getInstance().disPatchTask("showNumInModule",
+                        CommonTool.pathTrans(foldername));
+            }
+            adapter = new RcycleviewAdapter(getContext(), openMuduleDataList, R.layout.card1);
+            Observable.just("")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(String s) throws Exception {
+                            Log.w("test", " module 总数   : " + openMuduleDataList.size());
+                            recyclerView.setAdapter(adapter);
+                        }
+                    });
+        }
     }
+
 
 }

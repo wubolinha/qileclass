@@ -71,7 +71,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/shuxue_nor"
+            android:background="@mipmap/shuxue_nor"
             />
 
         <TextView
@@ -82,7 +82,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/xuexitiandi_nor"
+            android:background="@mipmap/xuexitiandi_nor"
             />
 
         <TextView
@@ -93,7 +93,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/yingyu_nor"
+            android:background="@mipmap/yingyu_nor"
             />
 
         <TextView
@@ -104,7 +104,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/yuwen_nor"
+            android:background="@mipmap/yuwen_nor"
             />
 
 

@@ -49,8 +49,6 @@ public class DetailUrlActivity extends AppCompatActivity {
     private RelativeLayout activity_detail_player;
     private OrientationUtils orientationUtils;
     private GSYVideoOptionBuilder gsyVideoOptionBuilder;
-
-
     private boolean isPlay;
     private boolean isPause;
     private boolean cache=false;
@@ -64,10 +62,12 @@ public class DetailUrlActivity extends AppCompatActivity {
             getWindow().setEnterTransition(new Explode());
             getWindow().setExitTransition(new Explode());
         }
+        Log.w("test","DetailUrlActivity onCreate \n\n\n\n\n ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         osspath = getIntent().getStringExtra("osspath");
         osscover= getIntent().getStringExtra("osscover");
+        Log.w("test","osspath:  "+osspath+"   osscover:  "+osscover);
         EventBus.getDefault().register(this);
         initview();
         initdata();
@@ -76,27 +76,20 @@ public class DetailUrlActivity extends AppCompatActivity {
     private void initview() {
         detailaty_recycleview = findViewById(R.id.detailaty_recycleview);
         detailaty_recycleview.setLayoutManager(new LinearLayoutManager(this));
-
         detailPlayer = findViewById(R.id.detail_player);
         activity_detail_player=findViewById(R.id.activity_detail_player);
-
         detailPlayer.getTitleTextView().setVisibility(View.GONE);
         detailPlayer.getBackButton().setVisibility(View.GONE);
-
         //外部辅助的旋转，帮助全屏
         orientationUtils = new OrientationUtils(this, detailPlayer);
         //初始化不打开外部的旋转
         orientationUtils.setEnable(false);
-
         GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL);
-
         //增加封面
         ImageView imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageURI(Uri.parse( osscover ));
-
         Picasso.with(this).load(osscover).into(imageView);
-
         gsyVideoOptionBuilder = new GSYVideoOptionBuilder()
                  .setThumbImageView(imageView)
                 .setIsTouchWiget(true)
@@ -123,13 +116,10 @@ public class DetailUrlActivity extends AppCompatActivity {
                         }
                     }
                 });
-
         if(gsyVideoOptionBuilder!=null){
             gsyVideoOptionBuilder.build(detailPlayer);
 
         }
-
-
         detailPlayer.getFullscreenButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,7 +129,6 @@ public class DetailUrlActivity extends AppCompatActivity {
                 detailPlayer.startWindowFullscreen(DetailUrlActivity.this, true, true);
             }
         });
-
         detailPlayer.setLockClickListener(new LockClickListener() {
             @Override
             public void onClick(View view, boolean lock) {
@@ -149,15 +138,15 @@ public class DetailUrlActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void initdata() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.w("test","initdata:"+osspath+"  osscover:"+osscover);
-                OssBrowser.getInstance().disPatchTask("ShowFileinModule",osspath);
+                String[] pathary  = osspath.split(".com/");
+                String newpath =pathary[1].replace("奇乐课堂/","");
+                OssBrowser.getInstance().disPatchTask("ShowFileinModule",newpath);
             }
         }).start();
     }
@@ -168,15 +157,13 @@ public class DetailUrlActivity extends AppCompatActivity {
         if(!msgEvent.getCmd().equals("BaseDataList")){
             return;
         }
-        Log.w("test", "baseDataList: " +msgEvent.getListdata().size());
-
+        Log.w("test", "DetailUrlActivity baseDataList: " +msgEvent.getListdata().size());
         RcycleviewAdapter adapter = new RcycleviewAdapter(this, msgEvent.getListdata(), R.layout.card2);
         detailaty_recycleview.setAdapter(adapter);
-
         adapter.setClickListen(new RcycleviewAdapter.adpterClickListen() {
             @Override
             public void click(int position, List mDatas) {
-                Logger.w("click: " + position);
+               // Logger.w("click: " + position);
                 BaseData data = (BaseData) msgEvent.getListdata().get(position);
                 playVideo(  data.getUrl() , data.getName() );
             }
@@ -186,11 +173,9 @@ public class DetailUrlActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         if (orientationUtils != null) {
             orientationUtils.backToProtVideo();
         }
-
         if (GSYVideoManager.backFromWindowFull(this)) {
             return;
         }

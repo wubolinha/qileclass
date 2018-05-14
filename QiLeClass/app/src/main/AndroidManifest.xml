@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-
+            android:launchMode="singleTask"
             android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,9 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.DetailUrlActivity"
+        <activity
+            android:launchMode="singleTask"
+            android:name=".ui.DetailUrlActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             ></activity>

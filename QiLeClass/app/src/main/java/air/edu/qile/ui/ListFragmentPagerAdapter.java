@@ -17,7 +17,6 @@ public class ListFragmentPagerAdapter   extends FragmentPagerAdapter {
     private Fragment_4 myFragment4 = null;
 
 
-
     public ListFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
         myFragment1 = new Fragment_1();
