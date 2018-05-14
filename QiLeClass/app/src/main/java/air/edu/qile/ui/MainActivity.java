@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         EventBus.getDefault().register(this);
 
-        OssBrowser.getInstance().disPatchTask("init","");
+
         Log.w("test","MainActivity onCreate \n\n\n\n\n ");
         initview();
-
+        OssBrowser.getInstance().disPatchTask("init","");
     }
 
     private void initview() {
@@ -76,6 +76,17 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         iconReset(0);
 
         getOpenOssConfigData( RootOssHttp.rootConfig );
+    }
+
+    private void  getOpenOssConfigData(final String url){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RootOssHttp.getInstance().getOpenOssModuleList(url);
+            }
+        }).start();
+
     }
 
     @Override
@@ -151,20 +162,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                            Fragment_3.fg_tag=folderarray[2];
                            break;
                    }
-                   getOpenOssConfigData(RootOssHttp.rootUrl+config.getName()+"/"+RootOssHttp.configName);
+                   MsgEvent event =new MsgEvent();
+                   event.setCmd("class_init");
+                   EventBus.getDefault().postSticky(  event);
+
                }
            }
        }
-    }
-    private void  getOpenOssConfigData(final String url){
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RootOssHttp.getInstance().getOpenOssModuleList(url);
-            }
-        }).start();
-
     }
 
     @Override

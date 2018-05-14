@@ -16,6 +16,7 @@ import java.util.List;
 
 import air.edu.qile.R;
 import air.edu.qile.model.OssBrowser;
+import air.edu.qile.model.RootOssHttp;
 import air.edu.qile.model.bean.ModuleData;
 import air.edu.qile.model.bean.MsgEvent;
 import air.edu.qile.model.bean.OpenMuduleData;
@@ -35,7 +36,8 @@ public class Fragment_2 extends BaseFragment {
     private RecyclerView recyclerView;
     private String  rootDir="奇乐课堂/歌乐汇/";
     private RcycleviewAdapter adapter;
-    public static String fg_tag="歌乐汇";
+    public static String fg_tag = "歌乐汇";
+    private List<OpenMuduleData> openMuduleDataList =new ArrayList<>();
 
 
     @Override
@@ -50,49 +52,21 @@ public class Fragment_2 extends BaseFragment {
         recyclerView=view.findViewById(R.id.fg2_recycleview);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
       //  OssBrowser.getInstance( ).disPatchTask("ShowModule", rootDir );
-
+        adapter = new RcycleviewAdapter(getContext(), openMuduleDataList, R.layout.card1);
+        recyclerView.setAdapter(adapter);
     }
 
 
 
 
 
-    @Override
-    public void EventBusEvent(List<ModuleData> moduleDataList) {
-
-        final List<ModuleData> newModulelist=new ArrayList<>();
-        for(ModuleData moduleData: moduleDataList){
-            if(moduleData.getFatherModule().equals( rootDir )){
-                newModulelist.add( moduleData );
-                OssBrowser.getInstance( ).disPatchTask("showNumInModule", moduleData.getFolder().getFullpath() );
-
-            }
-        }
-        if(newModulelist.size()==0){
-            return;
-        }
-         adapter=new RcycleviewAdapter(getContext(),newModulelist,R.layout.card1);
-        Observable.just(  ""   )
-                .subscribeOn(   Schedulers.io() )
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        Log.w("test", " module 总数   : "+newModulelist.size() );
-                        recyclerView.setAdapter( adapter );
-                    }
-                });
-    }
 
     @Override
     public void EventBusEvent(MsgEvent msgEvent) {
+        // 显示 每个文件夹下有多少个文件
         if (msgEvent.getCmd().equals("showNumInModule")) {
             String path = (String) msgEvent.getContent();
             String num = (String) msgEvent.getExtradata();
-
-            Log.w("test", "path:" + path + "  num:" + num);
-
-
             List mDatas = adapter.getmDatas();
             for (int i = 0; i < mDatas.size(); i++) {
                 OpenMuduleData data = (OpenMuduleData) mDatas.get(i);
@@ -104,30 +78,31 @@ public class Fragment_2 extends BaseFragment {
                 }
             }
         }
+        //  显示模块详情
         if (msgEvent.getCmd().equals("class_" + fg_tag)) {
             Log.w("test", "收到 ........ msgEvent：" + msgEvent.getCmd());
-            final List<OpenMuduleData> openMuduleDataList = msgEvent.getListdata();
+            openMuduleDataList.clear();
+            openMuduleDataList.addAll( msgEvent.getListdata() );
             if (openMuduleDataList.size() == 0) {
                 return;
             }
+
+            Log.w("test", " module 总数   : " + openMuduleDataList.size());
+            adapter.notifyDataSetChanged();
+
             for (OpenMuduleData openMuduleData : openMuduleDataList) {
                 String foldername = openMuduleData.getFatherurl() + openMuduleData.getConfig().getName();
                 OssBrowser.getInstance().disPatchTask("showNumInModule",
                         CommonTool.pathTrans(foldername));
             }
-            adapter = new RcycleviewAdapter(getContext(), openMuduleDataList, R.layout.card1);
-            Observable.just("")
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<String>() {
-                        @Override
-                        public void accept(String s) throws Exception {
-                            Log.w("test", " module 总数   : " + openMuduleDataList.size());
-                            recyclerView.setAdapter(adapter);
-                        }
-                    });
+
+
+        }
+        if (msgEvent.getCmd().equals("class_init")) {
+            getOpenOssConfigData(RootOssHttp.rootUrl+fg_tag+"/"+RootOssHttp.configName);
         }
     }
+
 
 
 }

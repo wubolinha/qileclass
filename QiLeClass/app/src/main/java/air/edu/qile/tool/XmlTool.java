@@ -1,14 +1,20 @@
 package air.edu.qile.tool;
 
+import android.net.Uri;
+
 import com.thoughtworks.xstream.XStream;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import air.edu.qile.model.bean.ModuleConfig;
 
@@ -44,11 +50,11 @@ public class XmlTool {
     }
 
 
-    // 读取
+    // 读取, bug: 中文路径在部分系统上出现 java.io.FileNotFoundException
     public List<ModuleConfig>  ReadFromXML(String xmlnetpath){
         List<ModuleConfig> configlist=new ArrayList<ModuleConfig>();
         try {
-            URL url = new URL(xmlnetpath);
+            URL url = new URL( CommonTool.encode(xmlnetpath,"UTF-8")      );
             InputStreamReader in = new InputStreamReader (new BufferedInputStream(url.openStream()),"UTF-8");
             configlist= (List<ModuleConfig>) xStream.fromXML( in );
             in.close();
@@ -57,6 +63,7 @@ public class XmlTool {
         }
         return configlist;
     }
+
 
 
 

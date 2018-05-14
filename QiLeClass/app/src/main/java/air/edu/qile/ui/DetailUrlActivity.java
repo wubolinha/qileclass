@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import air.edu.qile.R;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.BaseData;
 import air.edu.qile.model.bean.MsgEvent;
+import air.edu.qile.tool.CommonTool;
 
 public class DetailUrlActivity extends AppCompatActivity {
 
@@ -88,7 +90,19 @@ public class DetailUrlActivity extends AppCompatActivity {
         //增加封面
         ImageView imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setImageURI(Uri.parse( osscover ));
+        try {
+            osscover = CommonTool.encode(osscover,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Picasso.with(this).load(osscover).into(imageView);
+
+
+        try {
+            osscover = CommonTool.encode(osscover,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Picasso.with(this).load(osscover).into(imageView);
         gsyVideoOptionBuilder = new GSYVideoOptionBuilder()
                  .setThumbImageView(imageView)

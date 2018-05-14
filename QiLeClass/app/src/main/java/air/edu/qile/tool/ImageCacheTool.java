@@ -2,7 +2,10 @@ package air.edu.qile.tool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ExecutorService;
@@ -15,11 +18,12 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
  * Created by Administrator on 2018/5/3 0003.
  */
 
-public class ThumbTool {
+public class ImageCacheTool {
+
+    static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(8);
 
 
-    public   VideoInfo  getVideoInfo( String etag, String url){
-
+    public static   VideoInfo  getVideoInfo( String etag, String url){
 
         VideoInfo info =DiskCache.getInstance().getVideoInfo(etag);
         if(info == null){
@@ -49,7 +53,29 @@ public class ThumbTool {
     }
 
 
+    // 异步显示图片
+    public static void syncPutImageToView(final String etag, final String imageurl, final ImageView view){
 
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                String urltag= (String) view.getTag();
+                if(urltag.equals( imageurl )){
+                    VideoInfo info =  ImageCacheTool.getVideoInfo(etag, imageurl);
+                    final Bitmap bitmap = BitmapFactory.decodeByteArray(info.getThumbitmap(), 0, info.getThumbitmap().length);
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            view.setImageBitmap(bitmap);
+                        }
+                    });
+
+                }
+            }
+        });
+
+
+    }
 
 
 

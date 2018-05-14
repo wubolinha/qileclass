@@ -54,6 +54,7 @@ public class OssBrowser {
     private static OssBrowser instance;
     private volatile List<TaskContent> tasklist = new ArrayList<>();
     private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+    private long tokengettime=0;  //获取 token  的瞬时
 
     public static OssBrowser getInstance() {
         if (instance == null) {
@@ -85,6 +86,7 @@ public class OssBrowser {
         }
     }
 
+
     // 获取 token
     private void tokenGet() {
         if (tokenGet == null) {
@@ -97,6 +99,10 @@ public class OssBrowser {
                     DOTASK();
                 }
             };
+        }
+        if (System.currentTimeMillis() - tokengettime < 1000 * 60 * 30) {   //大于30分钟，重新获取
+            // Log.w("test","已经初始化 ....");
+            return;
         }
         tokenGet.getAccessToken();
     }
@@ -329,7 +335,7 @@ public class OssBrowser {
                 msgEvent.setContent(PrefixPath + "");
                 msgEvent.setExtradata(filesize + "  首");
                 EventBus.getDefault().post(msgEvent);
-                Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath + "  " + filesize);
+             //   Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath + "  " + filesize);
 
             }
 

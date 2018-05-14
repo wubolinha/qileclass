@@ -4,10 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +13,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import air.edu.qile.R;
-import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.bean.BaseData;
-import air.edu.qile.model.bean.ModuleData;
 import air.edu.qile.model.bean.OpenMuduleData;
 import air.edu.qile.model.bean.VideoInfo;
-import air.edu.qile.tool.DiskCache;
-import air.edu.qile.tool.ThumbTool;
+import air.edu.qile.tool.CommonTool;
+import air.edu.qile.tool.ImageCacheTool;
 
 /**
  * Created by Administrator on 2018/4/17.
@@ -73,8 +68,12 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 card1.number.setText(data.getNumInModule() + "");
                 try {
                     card1.title.setText(data.getConfig().getName());
-                    final String coverurl = data.getFatherurl() + data.getConfig().getCover();
-
+                    String coverurl = data.getFatherurl() + data.getConfig().getCover();
+                    try {
+                        coverurl = CommonTool.encode(coverurl,"UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     Picasso.with(mContext).load(coverurl).into(card1.cover);
 
 
@@ -113,10 +112,8 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 card1.card1rlt.setTag(position);
                 try {
                     card1.title.setText(data.getName());
-
-                    VideoInfo info = new ThumbTool().getVideoInfo(data.getEtag(), data.getUrl());
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(info.getThumbitmap(), 0, info.getThumbitmap().length);
-                    card1.cover.setImageBitmap(bitmap);
+                    card1.cover.setTag(  data.getUrl() );
+                    ImageCacheTool.syncPutImageToView(data.getEtag() , data.getUrl() , card1.cover  );
 
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();

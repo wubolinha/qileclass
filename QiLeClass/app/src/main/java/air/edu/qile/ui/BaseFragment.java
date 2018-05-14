@@ -17,6 +17,7 @@ import java.util.List;
 import air.edu.qile.MyApp;
 import air.edu.qile.model.OssBrowser;
 import air.edu.qile.model.OssTokenGet;
+import air.edu.qile.model.RootOssHttp;
 import air.edu.qile.model.bean.ModuleData;
 import air.edu.qile.model.bean.MsgEvent;
 import air.edu.qile.model.bean.TokenBean;
@@ -32,9 +33,13 @@ public class BaseFragment  extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void EventBusEvent(List<ModuleData> moduleDataList) {
@@ -44,12 +49,19 @@ public class BaseFragment  extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN,sticky=true)
     public void EventBusEvent( MsgEvent msgEvent ) {
 
+
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
+
+    public void  getOpenOssConfigData(final String url){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RootOssHttp.getInstance().getOpenOssModuleList(url);
+            }
+        }).start();
+
     }
 
 

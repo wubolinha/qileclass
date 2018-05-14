@@ -70,7 +70,7 @@ public  abstract class OssTokenGet {
                                 }
                             }).start();
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
