@@ -67,7 +67,7 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 card1.card1rlt.setTag(position);
                 card1.number.setText(data.getNumInModule() + "");
                 try {
-                    card1.title.setText(data.getConfig().getName());
+                    card1.title.setText(  data.getConfig().getName());
                     String coverurl = data.getFatherurl() + data.getConfig().getCover();
                     try {
                         coverurl = CommonTool.encode(coverurl,"UTF-8");
@@ -111,7 +111,7 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 Holder_Card card1 = (Holder_Card) holder;
                 card1.card1rlt.setTag(position);
                 try {
-                    card1.title.setText(data.getName());
+                    card1.title.setText((position+1)+", "+data.getName());
                     card1.cover.setTag(  data.getUrl() );
                     ImageCacheTool.syncPutImageToView(data.getEtag() , data.getUrl() , card1.cover ,card1.number );
 
@@ -160,6 +160,8 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         String coverurl = data.getFatherurl() + data.getConfig().getCover();
 
                         Intent intent = new Intent(mContext, DetailUrlActivity.class);
+                   //     Intent intent = new Intent(mContext, ListPlayActivity.class);
+
                         intent.putExtra("osspath", osspath+"/");
                         intent.putExtra("osscover", coverurl);
                         mContext.startActivity(intent);

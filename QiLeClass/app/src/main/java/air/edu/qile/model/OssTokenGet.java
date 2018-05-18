@@ -62,7 +62,7 @@ public  abstract class OssTokenGet {
                 if (body != null) {
                     try {
                         final String txt = body.string();
-                        Log.w("test","txt:  "+txt);
+                    //    Log.w("test","txt:  "+txt);
                         if (txt != null) {
                             new Thread(new Runnable() {
                                 @Override

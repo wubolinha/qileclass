@@ -1,9 +1,27 @@
 <resources>
     <string name="app_name">奇艺课堂</string>
-
-
     <string name="weiketang">微课堂</string>
     <string name="yingyuehui">音乐会</string>
     <string name="gushihui">故事会</string>
     <string name="xuexizhushou">学习助手</string>
+
+    <string-array name="fg4_item_name">
+        <item>投屏到电视</item>
+        <item>下载管理</item>
+        <item>夜间模式</item>
+        <item>播放时跳过片头</item>
+        <item>清除缓存</item>
+        <item>关于奇异课堂</item>
+    </string-array>
+
+    <integer-array name="fg4_item_icon">
+        <item>@mipmap/happycast</item>
+        <item>@mipmap/download</item>
+        <item>@mipmap/cleancache</item>
+        <item>@mipmap/nightmode</item>
+        <item>@mipmap/video_logo</item>
+        <item>@mipmap/sharelogo</item>
+    </integer-array>
+
+
 </resources>

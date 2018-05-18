@@ -1,6 +1,7 @@
 package air.edu.qile.tool;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -49,7 +50,6 @@ public class XmlTool {
         return  instance;
     }
 
-
     // 读取, bug: 中文路径在部分系统上出现 java.io.FileNotFoundException
     public List<ModuleConfig>  ReadFromXML(String xmlnetpath){
         List<ModuleConfig> configlist=new ArrayList<ModuleConfig>();
@@ -61,15 +61,15 @@ public class XmlTool {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        for(ModuleConfig config: configlist  ){
+            Log.w("testconfig","config:"+config);
+        }
         return configlist;
     }
 
 
-
-
     //  写入  xml
     public boolean WriteToXML(List<ModuleConfig> configlist, String SavePath){
-
         try {
             OutputStreamWriter out=new OutputStreamWriter( new FileOutputStream(SavePath),"UTF-8"  );
             xStream.toXML(configlist, out);
@@ -80,7 +80,6 @@ public class XmlTool {
             e.printStackTrace();
         }
         return  false;
-
     }
 
 

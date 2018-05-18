@@ -36,12 +36,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private  ViewPager viewpage;
     private int currentIndex;
     private boolean hadGetIndex=false;
+    private Handler showhandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        showhandler=new Handler();
         EventBus.getDefault().register(this);
 
 
@@ -162,10 +164,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                            Fragment_3.fg_tag=folderarray[2];
                            break;
                    }
-                   MsgEvent event =new MsgEvent();
-                   event.setCmd("class_init");
-                   EventBus.getDefault().postSticky(  event);
 
+                   showhandler.postDelayed(new Runnable() {
+                       @Override
+                       public void run() {
+                           MsgEvent event =new MsgEvent();
+                           event.setCmd("class_init");
+                           EventBus.getDefault().post (  event);
+                       }
+                   },200);
                }
            }
        }

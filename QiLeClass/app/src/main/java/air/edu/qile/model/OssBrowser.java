@@ -192,7 +192,9 @@ public class OssBrowser {
 
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
         listObjects.setPrefix(PrefixPath);
+        listObjects.setMaxKeys( 1000 );
         final List<BaseData> baseDataList = new ArrayList<>();
+
         OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
             @Override
             public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
@@ -251,7 +253,7 @@ public class OssBrowser {
         //   "/" 为文件夹的分隔符
         listObjects.setDelimiter("/");
         listObjects.setPrefix(PrefixPath);
-
+        listObjects.setMaxKeys( 1000 );
         final List<BaseData> baseDataList = new ArrayList<>();
         OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
             @Override
@@ -325,10 +327,13 @@ public class OssBrowser {
      * *****/
     private void showNumInModule(final String PrefixPath) {
 
-        Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath);
+       // Log.w("test", "统计一个文件夹下有多少个文件:" + PrefixPath);
         ListObjectsRequest listObjects = new ListObjectsRequest(BucketName);
         listObjects.setPrefix(PrefixPath);
-
+        listObjects.setMaxKeys( 1000 );
+        if(ossclient==null){
+            return;
+        }
         OSSAsyncTask task = ossclient.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
             @Override
             public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {

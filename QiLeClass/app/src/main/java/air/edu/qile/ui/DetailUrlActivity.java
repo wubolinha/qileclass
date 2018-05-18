@@ -20,6 +20,7 @@ import com.shuyu.gsyvideoplayer.GSYBaseActivityDetail;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder;
 import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack;
+import com.shuyu.gsyvideoplayer.listener.GSYVideoProgressListener;
 import com.shuyu.gsyvideoplayer.listener.LockClickListener;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -56,8 +57,8 @@ public class DetailUrlActivity extends AppCompatActivity {
     private boolean isPlay;
     private boolean isPause;
     private boolean cache=false;
-
-
+    private int currentplayPosition=0;
+    private List   listdata;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // 设置一个exit transition
@@ -100,7 +101,6 @@ public class DetailUrlActivity extends AppCompatActivity {
         }
         Picasso.with(this).load(osscover).into(imageView);
 
-
         gsyVideoOptionBuilder = new GSYVideoOptionBuilder()
                 .setThumbImageView(imageView)
                 .setIsTouchWiget(true)
@@ -111,6 +111,21 @@ public class DetailUrlActivity extends AppCompatActivity {
                 .setSeekRatio(1)
                 .setUrl("")
                 .setCacheWithPlay(cache)
+                .setGSYVideoProgressListener(new GSYVideoProgressListener() {
+                    @Override
+                    public void onProgress(int progress, int secProgress, int currentPosition, int duration) {
+                       // Log.w("test","progress: "+progress+"   currentPosition: "+currentPosition+"  duration: "+duration);
+                        if(duration -currentPosition <800 ){
+                            //  播放下一个
+                            if(currentplayPosition+1< listdata.size()){
+                                currentplayPosition=currentplayPosition+1;
+                            }else {
+                                currentplayPosition=0;  //重头开始
+                            }
+                            playVideo();
+                        }
+                    }
+                })
                 .setVideoAllCallBack(new GSYSampleCallBack() {
                     @Override
                     public void onPrepared(String url, Object... objects) {
@@ -149,7 +164,6 @@ public class DetailUrlActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void initdata() {
@@ -163,7 +177,6 @@ public class DetailUrlActivity extends AppCompatActivity {
         }).start();
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void EventBusEvent(final MsgEvent msgEvent) {
         if(!msgEvent.getCmd().equals("BaseDataList")){
@@ -172,21 +185,21 @@ public class DetailUrlActivity extends AppCompatActivity {
         Log.w("test", "DetailUrlActivity baseDataList: " +msgEvent.getListdata().size());
         RcycleviewAdapter adapter = new RcycleviewAdapter(this, msgEvent.getListdata(), R.layout.card2);
         detailaty_recycleview.setAdapter(adapter);
+        listdata=msgEvent.getListdata();
         adapter.setClickListen(new RcycleviewAdapter.adpterClickListen() {
             @Override
             public void click(int position, List mDatas) {
-               // Logger.w("click: " + position);
-                BaseData data = (BaseData) msgEvent.getListdata().get(position);
-                playVideo(  data.getUrl() , data.getName() );
+                currentplayPosition=position;
+                playVideo(  );
             }
         });
         if( msgEvent.getListdata().size() >0 ){
             BaseData data = (BaseData) msgEvent.getListdata().get(0);
             reSetCover( data.getUrl() , data.getName()   );
+            currentplayPosition=0;
         }
-
+        // 顺序播放
     }
-
 
     @Override
     public void onBackPressed() {
@@ -198,7 +211,6 @@ public class DetailUrlActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
-
 
     @Override
     protected void onPause() {
@@ -213,8 +225,6 @@ public class DetailUrlActivity extends AppCompatActivity {
         super.onResume();
         isPause = false;
     }
-
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -241,22 +251,28 @@ public class DetailUrlActivity extends AppCompatActivity {
                 .build(detailPlayer);
         gsyVideoOptionBuilder.build(detailPlayer);
     }
-    private void playVideo(   String url , String name) {
+
+
+    private void playVideo(    ) {
+        String url=((BaseData)listdata.get(currentplayPosition)).getUrl() ;
+        String name=  ((BaseData)listdata.get(currentplayPosition)).getName();
         detailPlayer.release();
-        gsyVideoOptionBuilder.setUrl(url)
-                .setCacheWithPlay(cache)
+
+        gsyVideoOptionBuilder
+                .setUrl(url)
                 .setVideoTitle(name)
+                .setIsTouchWiget(true)
+                .setRotateViewAuto(false)
+                .setLockLand(false)
+                .setShowFullAnimation(false)
+                .setNeedLockFull(true)
+                .setSeekRatio(1)
+                .setCacheWithPlay(cache)
                 .build(detailPlayer);
-        gsyVideoOptionBuilder.build(detailPlayer);
-        detailPlayer.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                detailPlayer.startPlayLogic();
-            }
-        }, 100);
+
+       detailPlayer.startPlayLogic();
+
     }
-
-
 
     @Override
     protected void onDestroy() {
@@ -265,8 +281,7 @@ public class DetailUrlActivity extends AppCompatActivity {
         if (isPlay) {
             getCurPlay().release();
         }
-        //GSYPreViewManager.instance().releaseMediaPlayer();
-        if (orientationUtils != null)
+         if (orientationUtils != null)
             orientationUtils.releaseListener();
     }
 

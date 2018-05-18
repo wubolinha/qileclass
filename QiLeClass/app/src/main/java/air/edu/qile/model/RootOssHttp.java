@@ -35,6 +35,7 @@ public class RootOssHttp {
     }
 
     public  void getOpenOssModuleList(String  url){
+        Log.w("test","RootOssHttp getOpenOssModuleList : "+url);
         List<ModuleConfig> configlist =XmlTool.getInstance().ReadFromXML(url);
         List<OpenMuduleData> openMuduleDataList=new ArrayList<>();
 
@@ -63,7 +64,7 @@ public class RootOssHttp {
             msgEvent.setListdata( openMuduleDataList );
         }
         Log.w("bolin:  ","发送 msgEvent:"+msgEvent.getCmd());
-        EventBus.getDefault().postSticky(msgEvent);
+        EventBus.getDefault().post (msgEvent);
     }
 
 

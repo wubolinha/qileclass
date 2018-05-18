@@ -34,7 +34,7 @@ public class ImageCacheTool {
 
             FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
             mmr.setDataSource(  url);
-            Bitmap bitmap= mmr.getScaledFrameAtTime( 3000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC,250,180 );
+            Bitmap bitmap= mmr.getScaledFrameAtTime( 5000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC,250,180 );
             // Bitmap bitmap = mmr.getFrameAtTime(2000000, FFmpegMediaMetadataRetriever.OPTION_NEXT_SYNC); // frame at 2 seconds
             String strDuration = mmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);
             info=new VideoInfo();

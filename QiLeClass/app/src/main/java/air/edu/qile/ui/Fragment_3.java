@@ -43,10 +43,10 @@ public class Fragment_3 extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.w("test", getClass().getSimpleName()+ "   onCreateView...");
         View view = inflater.inflate(R.layout.fg_content_3, container, false);
         initview(view);
-
-        return view;
+         return view;
     }
 
     private void initview(View view) {

@@ -42,7 +42,7 @@ public class Fragment_1 extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.w("test", "Fragment_1  onCreateView...");
+        Log.w("test", getClass().getSimpleName()+ "   onCreateView...");
         View view = inflater.inflate(R.layout.fg_content_1, container, false);
 
         initview(view);
@@ -85,10 +85,8 @@ public class Fragment_1 extends BaseFragment {
             if (openMuduleDataList.size() == 0) {
                 return;
             }
-
             Log.w("test", " module 总数   : " + openMuduleDataList.size());
             adapter.notifyDataSetChanged();
-
             for (OpenMuduleData openMuduleData : openMuduleDataList) {
                 String foldername = openMuduleData.getFatherurl() + openMuduleData.getConfig().getName();
                 OssBrowser.getInstance().disPatchTask("showNumInModule",
@@ -96,10 +94,8 @@ public class Fragment_1 extends BaseFragment {
             }
         }
         if (msgEvent.getCmd().equals("class_init")) {
-            getOpenOssConfigData(RootOssHttp.rootUrl+fg_tag+"/"+RootOssHttp.configName);
+          getOpenOssConfigData(RootOssHttp.rootUrl+fg_tag+"/"+RootOssHttp.configName);
         }
-
-
     }
 
 

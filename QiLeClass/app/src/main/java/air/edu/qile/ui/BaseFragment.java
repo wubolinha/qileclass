@@ -4,6 +4,7 @@ package air.edu.qile.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ public class BaseFragment  extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.w("test", getClass().getSimpleName()+ "   Register EventBus ...");
         EventBus.getDefault().register(this);
     }
 
@@ -46,15 +49,12 @@ public class BaseFragment  extends Fragment {
 
 
     }
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky=true)
+    @Subscribe(threadMode = ThreadMode.MAIN )
     public void EventBusEvent( MsgEvent msgEvent ) {
-
-
+        Log.w("test",getClass().getSimpleName()+" 收到 EventBusEvent:  "+ msgEvent.getCmd());
     }
 
-
     public void  getOpenOssConfigData(final String url){
-
         new Thread(new Runnable() {
             @Override
             public void run() {
