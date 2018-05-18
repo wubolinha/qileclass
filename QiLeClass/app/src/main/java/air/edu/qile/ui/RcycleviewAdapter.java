@@ -22,6 +22,7 @@ import air.edu.qile.model.bean.BaseData;
 import air.edu.qile.model.bean.OpenMuduleData;
 import air.edu.qile.model.bean.VideoInfo;
 import air.edu.qile.tool.CommonTool;
+import air.edu.qile.tool.DiskCache;
 import air.edu.qile.tool.ImageCacheTool;
 
 /**
@@ -34,6 +35,7 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     protected List mDatas;
     private int cardId;
     private adpterClickListen clickListen;
+    protected boolean isScrolling = false;  //是否正在滑动
 
 
     public RcycleviewAdapter(Context mContext, List mDatas, int cardId) {
@@ -111,9 +113,12 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 Holder_Card card1 = (Holder_Card) holder;
                 card1.card1rlt.setTag(position);
                 try {
-                    card1.title.setText((position+1)+", "+data.getName());
+                    //card1.title.setText((position+1)+", "+data.getName());
+                    card1.title.setText(  data.getName());
                     card1.cover.setTag(  data.getUrl() );
+
                     ImageCacheTool.syncPutImageToView(data.getEtag() , data.getUrl() , card1.cover ,card1.number );
+
 
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();
@@ -129,7 +134,13 @@ public class RcycleviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return mDatas.size();
     }
 
+    public void setScrolling(boolean scrolling) {
+        isScrolling = scrolling;
+    }
 
+    /*************
+     *
+     ***************/
     public class Holder_Card extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView cover;
         public TextView title, number;

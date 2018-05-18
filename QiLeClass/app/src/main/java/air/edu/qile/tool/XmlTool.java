@@ -6,6 +6,7 @@ import android.util.Log;
 import com.thoughtworks.xstream.XStream;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -55,9 +56,14 @@ public class XmlTool {
         List<ModuleConfig> configlist=new ArrayList<ModuleConfig>();
         try {
             URL url = new URL( CommonTool.encode(xmlnetpath,"UTF-8")      );
-            InputStreamReader in = new InputStreamReader (new BufferedInputStream(url.openStream()),"UTF-8");
-            configlist= (List<ModuleConfig>) xStream.fromXML( in );
-            in.close();
+          //  InputStreamReader in = new InputStreamReader (new BufferedInputStream(url.openStream()),"UTF-8");
+          //  configlist= (List<ModuleConfig>) xStream.fromXML( in );
+          //  in.close();
+
+            BufferedReader  reader = new BufferedReader(new   InputStreamReader(url.openStream()));
+            configlist= (List<ModuleConfig>) xStream.fromXML( reader );
+            reader.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -94,7 +94,7 @@ public class OssBrowser {
                 @Override
                 public void hadGetToken(TimeTagTokenBean timeTagTokenBean) {
                     // 先初始化，再 执行任务
-                    Log.w("test", "先初始化，再 执行任务 .........");
+                    // Log.w("test", "先初始化，再 执行任务 .........");
                     initOss(timeTagTokenBean.getTokenBean());
                     DOTASK();
                 }
@@ -159,9 +159,10 @@ public class OssBrowser {
             return;
         }
         if (System.currentTimeMillis() - ossinittime < 1000 * 60 * 30) {   //大于30分钟，重新获取
-           // Log.w("test","已经初始化 ....");
+             Log.w("test","oss 已经初始化 ....");
             return;
         }
+
         //  OSSLog.enableLog();
         OSSCredentialProvider credentialProvider = new StsGetter(token);
         //该配置类如果不设置，会有默认配置，具体可看该类
@@ -170,11 +171,13 @@ public class OssBrowser {
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
         conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
         conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+
         TimeTagTokenBean timeTagTokenBean = Hawk.get(TimeTagTokenBean.class.getSimpleName());
-        if (System.currentTimeMillis() - timeTagTokenBean.getTime() < 1000 * 60 * 30) {   //小yu30分钟，
+        if (System.currentTimeMillis() - timeTagTokenBean.getTime() < 1000 * 60 * 30) {   //小于30分钟，
             ossclient = new OSSClient(MyApp.AppContext, EndPoint, credentialProvider);
         }
-        Log.w("test", "初始化  Oss ...." + token.getRequestId());
+        Log.w("test", "先初始化，再 执行任务 .........初始化  Oss  " + token.getRequestId());
+
         ossinittime = System.currentTimeMillis();
     }
 

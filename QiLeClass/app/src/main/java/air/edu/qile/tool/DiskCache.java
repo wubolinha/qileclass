@@ -29,6 +29,14 @@ public class DiskCache {
         Hawk.put(tag,info);
     }
 
+    public  boolean  isCached(String url){
+        if(Hawk.contains(url)){
+            return true;
+        }
+        return false;
+    }
+
+
     public VideoInfo  getVideoInfo(String url){
         Log.w("test","DiskCache  get :  "+url);
         if(Hawk.contains(url)){

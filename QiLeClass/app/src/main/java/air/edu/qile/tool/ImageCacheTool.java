@@ -58,13 +58,17 @@ public class ImageCacheTool {
 
     // 异步显示图片
     public static void syncPutImageToView(final String etag, final String imageurl, final ImageView thumbview,  final TextView numtext){
-
+        if(fixedThreadPool==null){
+            fixedThreadPool = Executors.newFixedThreadPool(8);
+        }
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
                 String urltag= (String) thumbview.getTag();
                 String img_url = imageurl;
                 if(urltag.equals( img_url )){
+                    // 如果activity已经退出了，就不在继续执行
+
                     final VideoInfo info =  ImageCacheTool.getVideoInfo(etag, img_url);
                     final Bitmap bitmap = BitmapFactory.decodeByteArray(info.getThumbitmap(), 0, info.getThumbitmap().length);
 
@@ -88,6 +92,12 @@ public class ImageCacheTool {
 
     }
 
+    public static void stopGetImage(){
+        Log.w("test","停止获取图片 ...  fixedThreadPool.shutdownNow");
+        fixedThreadPool.shutdownNow();
+        fixedThreadPool=null;
+
+    }
 
 
 }

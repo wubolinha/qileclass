@@ -44,21 +44,25 @@ import air.edu.qile.model.bean.BaseData;
 import air.edu.qile.model.bean.MsgEvent;
 import air.edu.qile.model.bean.TokenBean;
 import air.edu.qile.tool.CommonTool;
+import air.edu.qile.tool.ImageCacheTool;
+
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class DetailUrlActivity extends AppCompatActivity {
 
     private String osspath;
     private String osscover;
     private RecyclerView detailaty_recycleview;
-    private StandardGSYVideoPlayer  detailPlayer;
+    private StandardGSYVideoPlayer detailPlayer;
     private RelativeLayout activity_detail_player;
     private OrientationUtils orientationUtils;
     private GSYVideoOptionBuilder gsyVideoOptionBuilder;
     private boolean isPlay;
     private boolean isPause;
-    private boolean cache=false;
-    private int currentplayPosition=0;
-    private List   listdata;
+    private boolean cache = false;
+    private int currentplayPosition = 0;
+    private List listdata;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // 设置一个exit transition
@@ -67,12 +71,12 @@ public class DetailUrlActivity extends AppCompatActivity {
             getWindow().setEnterTransition(new Explode());
             getWindow().setExitTransition(new Explode());
         }
-        Log.w("test","DetailUrlActivity onCreate \n\n\n\n\n ");
+        Log.w("test", "DetailUrlActivity onCreate \n\n\n\n\n ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         osspath = getIntent().getStringExtra("osspath");
-        osscover= getIntent().getStringExtra("osscover");
-        Log.w("test","osspath:  "+osspath+"   osscover:  "+osscover);
+        osscover = getIntent().getStringExtra("osscover");
+        Log.w("test", "osspath:  " + osspath + "   osscover:  " + osscover);
         EventBus.getDefault().register(this);
         initview();
         initdata();
@@ -82,7 +86,7 @@ public class DetailUrlActivity extends AppCompatActivity {
         detailaty_recycleview = findViewById(R.id.detailaty_recycleview);
         detailaty_recycleview.setLayoutManager(new LinearLayoutManager(this));
         detailPlayer = findViewById(R.id.detail_player);
-        activity_detail_player=findViewById(R.id.activity_detail_player);
+        activity_detail_player = findViewById(R.id.activity_detail_player);
         detailPlayer.getTitleTextView().setVisibility(View.GONE);
         detailPlayer.getBackButton().setVisibility(View.GONE);
         //外部辅助的旋转，帮助全屏
@@ -95,7 +99,7 @@ public class DetailUrlActivity extends AppCompatActivity {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         try {
-            osscover = CommonTool.encode(osscover,"UTF-8");
+            osscover = CommonTool.encode(osscover, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -114,13 +118,13 @@ public class DetailUrlActivity extends AppCompatActivity {
                 .setGSYVideoProgressListener(new GSYVideoProgressListener() {
                     @Override
                     public void onProgress(int progress, int secProgress, int currentPosition, int duration) {
-                       // Log.w("test","progress: "+progress+"   currentPosition: "+currentPosition+"  duration: "+duration);
-                        if(duration -currentPosition <800 ){
+                        // Log.w("test","progress: "+progress+"   currentPosition: "+currentPosition+"  duration: "+duration);
+                        if (duration - currentPosition < 800) {
                             //  播放下一个
-                            if(currentplayPosition+1< listdata.size()){
-                                currentplayPosition=currentplayPosition+1;
-                            }else {
-                                currentplayPosition=0;  //重头开始
+                            if (currentplayPosition + 1 < listdata.size()) {
+                                currentplayPosition = currentplayPosition + 1;
+                            } else {
+                                currentplayPosition = 0;  //重头开始
                             }
                             playVideo();
                         }
@@ -134,6 +138,7 @@ public class DetailUrlActivity extends AppCompatActivity {
                         orientationUtils.setEnable(true);
                         isPlay = true;
                     }
+
                     @Override
                     public void onQuitFullscreen(String url, Object... objects) {
                         super.onQuitFullscreen(url, objects);
@@ -142,7 +147,7 @@ public class DetailUrlActivity extends AppCompatActivity {
                         }
                     }
                 });
-        if(gsyVideoOptionBuilder!=null){
+        if (gsyVideoOptionBuilder != null) {
             gsyVideoOptionBuilder.build(detailPlayer);
 
         }
@@ -164,41 +169,56 @@ public class DetailUrlActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void initdata() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String[] pathary  = osspath.split(".com/");
-                String newpath =pathary[1].replace("奇乐课堂/","");
-                OssBrowser.getInstance().disPatchTask("ShowFileinModule",newpath);
+                String[] pathary = osspath.split(".com/");
+                String newpath = pathary[1].replace("奇乐课堂/", "");
+                OssBrowser.getInstance().disPatchTask("ShowFileinModule", newpath);
             }
         }).start();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void EventBusEvent(final MsgEvent msgEvent) {
-        if(!msgEvent.getCmd().equals("BaseDataList")){
+        if (!msgEvent.getCmd().equals("BaseDataList")) {
             return;
         }
-        Log.w("test", "DetailUrlActivity baseDataList: " +msgEvent.getListdata().size());
-        RcycleviewAdapter adapter = new RcycleviewAdapter(this, msgEvent.getListdata(), R.layout.card2);
+        Log.w("test", "DetailUrlActivity baseDataList: " + msgEvent.getListdata().size());
+        final RcycleviewAdapter adapter = new RcycleviewAdapter(this, msgEvent.getListdata(), R.layout.card2);
         detailaty_recycleview.setAdapter(adapter);
-        listdata=msgEvent.getListdata();
+        listdata = msgEvent.getListdata();
         adapter.setClickListen(new RcycleviewAdapter.adpterClickListen() {
             @Override
             public void click(int position, List mDatas) {
-                currentplayPosition=position;
-                playVideo(  );
+                currentplayPosition = position;
+                playVideo();
             }
         });
-        if( msgEvent.getListdata().size() >0 ){
+        if (msgEvent.getListdata().size() > 0) {
             BaseData data = (BaseData) msgEvent.getListdata().get(0);
-            reSetCover( data.getUrl() , data.getName()   );
-            currentplayPosition=0;
+            reSetCover(data.getUrl(), data.getName());
+            currentplayPosition = 0;
         }
-        // 顺序播放
+
+        // 监听滑动状态
+        detailaty_recycleview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                // 查看源码可知State有三种状态：SCROLL_STATE_IDLE（静止）、SCROLL_STATE_DRAGGING（上升）、SCROLL_STATE_SETTLING（下落）
+                if (newState == SCROLL_STATE_IDLE) { // 滚动静止时才加载图片资源，极大提升流畅度
+                    adapter.setScrolling(false);
+                //    adapter.notifyDataSetChanged(); // notify调用后onBindViewHolder会响应调用
+                } else
+                    adapter.setScrolling(true);
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
     }
 
     @Override
@@ -237,13 +257,13 @@ public class DetailUrlActivity extends AppCompatActivity {
 
     private GSYVideoPlayer getCurPlay() {
         if (detailPlayer.getFullWindowPlayer() != null) {
-            return  detailPlayer.getFullWindowPlayer();
+            return detailPlayer.getFullWindowPlayer();
         }
         return detailPlayer;
     }
 
     //重新设置封面的播放地址
-    private void reSetCover( String url , String name){
+    private void reSetCover(String url, String name) {
         detailPlayer.release();
         gsyVideoOptionBuilder.setUrl(url)
                 .setCacheWithPlay(cache)
@@ -253,9 +273,9 @@ public class DetailUrlActivity extends AppCompatActivity {
     }
 
 
-    private void playVideo(    ) {
-        String url=((BaseData)listdata.get(currentplayPosition)).getUrl() ;
-        String name=  ((BaseData)listdata.get(currentplayPosition)).getName();
+    private void playVideo() {
+        String url = ((BaseData) listdata.get(currentplayPosition)).getUrl();
+        String name = ((BaseData) listdata.get(currentplayPosition)).getName();
         detailPlayer.release();
 
         gsyVideoOptionBuilder
@@ -270,7 +290,7 @@ public class DetailUrlActivity extends AppCompatActivity {
                 .setCacheWithPlay(cache)
                 .build(detailPlayer);
 
-       detailPlayer.startPlayLogic();
+        detailPlayer.startPlayLogic();
 
     }
 
@@ -281,8 +301,10 @@ public class DetailUrlActivity extends AppCompatActivity {
         if (isPlay) {
             getCurPlay().release();
         }
-         if (orientationUtils != null)
+        if (orientationUtils != null){
             orientationUtils.releaseListener();
+        }
+        ImageCacheTool.stopGetImage();
     }
 
 }
