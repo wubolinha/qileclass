@@ -44,7 +44,8 @@ public class Fragment_4 extends BaseFragment {
             itemlist.add( new Fragment_4_Adapter.Item(itemicon[i] , itemname[i] ));
         }
         recyclerView =view.findViewById(R.id.fg4_recycleview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+      //  recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         Fragment_4_Adapter adapter=new Fragment_4_Adapter(itemlist,getActivity()  );
         recyclerView.setAdapter( adapter );
     }

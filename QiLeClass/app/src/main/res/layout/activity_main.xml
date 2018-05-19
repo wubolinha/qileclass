@@ -97,7 +97,7 @@
             />
 
         <TextView
-            android:text="@string/xuexizhushou"
+            android:text="@string/jiazhangqu"
             android:textColor="@android:color/black"
             android:gravity="center_horizontal|bottom"
             android:id="@+id/textv4"
